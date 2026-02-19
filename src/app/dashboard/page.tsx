@@ -6,7 +6,8 @@ import {
   Save, MessageCircle, Settings, Power, Smartphone,
   CheckCircle2, Bot, Database, LineChart, MessageSquare, 
   Plus, ArrowRight, LogOut, Trash2, Zap, LayoutDashboard,
-  TrendingUp, Users, ShieldCheck, HelpCircle, Clock, Copy, AlertCircle
+  TrendingUp, Users, ShieldCheck, HelpCircle, Clock, Copy, AlertCircle,
+  CreditCard, Sparkles, Star
 } from 'lucide-react';
 
 // Firebase 相關模組匯入
@@ -35,7 +36,7 @@ export default function DashboardPage() {
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   // --- UI 與 業務狀態 ---
-  const [activeTab, setActiveTab] = useState('knowledge'); // 'dashboard', 'knowledge', 'settings'
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'knowledge', 'settings'
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [inputMessage, setInputMessage] = useState("");
@@ -51,9 +52,10 @@ export default function DashboardPage() {
     checkOut: "11:00",
     wifiSsid: "Guest_WiFi",
     wifiPass: "88888888",
-    tone: "enthusiastic",
+    tone: "enthusiastic", // 熱情親切
     customRules: "請保持禮貌，若遇到殺價請委婉拒絕。",
     lineToken: "", 
+    currentPlan: "X-Pro", // 對應首頁方案
   });
 
   const [qaList, setQaList] = useState<any[]>([]);
@@ -94,7 +96,7 @@ export default function DashboardPage() {
       // 若最終仍無有效設定，進入純 Demo 模式
       if (!firebaseConfig || !firebaseConfig.projectId) {
         console.warn("未偵測到資料庫設定，系統將以展示模式運作。");
-        setIsAuthReady(true); // 允許進入 UI 但 db 為空
+        setIsAuthReady(true); 
         return;
       }
 
@@ -223,7 +225,7 @@ export default function DashboardPage() {
       
       if (found) reply = found.a;
       else if (q.includes("wifi")) reply = `WiFi 帳號是【${config.wifiSsid}】，密碼是【${config.wifiPass}】。📶`;
-      else if (q.includes("入住") || q.includes("時間")) reply = `入住時間是 ${config.checkIn}，退房時間是 ${config.checkOut} 喔！🏠`;
+      else if (q.includes("入住") || q.includes("時間")) reply = `我們的入住時間是 ${config.checkIn}，退房時間是 ${config.checkOut} 喔！🏠`;
 
       if (config.tone === 'enthusiastic') reply += " 🥰";
       setChatHistory(prev => [...prev, { role: 'assistant', content: reply }]);
@@ -253,13 +255,13 @@ export default function DashboardPage() {
         </div>
         
         <nav className="flex-1 mt-6 px-4 space-y-2">
-          <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}>
+          <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}>
             <LayoutDashboard size={20} /><span>數據概覽</span>
           </button>
           <button onClick={() => setActiveTab('knowledge')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'knowledge' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800'}`}>
             <Database size={20} /><span>知識庫管理</span>
           </button>
-          <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'settings' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}>
+          <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}>
             <Settings size={20} /><span>LINE 串接</span>
           </button>
         </nav>
@@ -275,10 +277,13 @@ export default function DashboardPage() {
       <main className="flex-1 p-4 md:p-8 overflow-y-auto z-10">
         <div className="max-w-6xl mx-auto">
           
+          {/* 分頁 1: 數據概覽與方案 */}
           {activeTab === 'dashboard' && (
-            <div className="animate-in fade-in duration-500">
-              <h2 className="text-3xl font-bold mb-8">營運成效統計</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="animate-in fade-in duration-500 space-y-10">
+              <h2 className="text-3xl font-bold mb-8 flex items-center">
+                <LayoutDashboard className="mr-3 text-indigo-600" />營運成效統計
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                   { label: "節省客服時數", val: `${analytics.savedHours}h`, icon: <Clock />, color: "text-indigo-600", bg: "bg-indigo-100" },
                   { label: "AI 解決率", val: `${analytics.resolutionRate}%`, icon: <ShieldCheck />, color: "text-emerald-600", bg: "bg-emerald-100" },
@@ -292,10 +297,48 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-              <div className="bg-white p-20 rounded-3xl border border-dashed border-slate-300 text-center">
-                <TrendingUp size={48} className="mx-auto text-slate-300 mb-4" />
+
+              {/* 新增：方案管理區塊 (對應首頁方案) */}
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-slate-50 px-8 py-6 border-b border-slate-200 flex justify-between items-center">
+                   <div className="flex items-center space-x-3">
+                      <CreditCard className="text-indigo-600" />
+                      <h3 className="font-bold text-xl text-slate-800">目前方案管理</h3>
+                   </div>
+                   <div className="bg-indigo-600 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest animate-pulse">
+                     {config.currentPlan} 專業管家
+                   </div>
+                </div>
+                <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2 space-y-4">
+                    <p className="text-slate-500 text-sm leading-relaxed">
+                      您目前正在使用 <span className="font-bold text-indigo-600">專業管家 (X-Pro)</span> 方案。此方案提供完整 AI 回覆功能，包含無上限 Q&A 以及語氣自訂。您的訂閱將於下個月自動續約。
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {["AI 客服語氣自訂", "無限 Q&A 知識庫", "LINE 官方帳號串接", "自動入住須知"].map((feat, i) => (
+                        <div key={i} className="flex items-center space-x-2 text-sm text-slate-600">
+                          <CheckCircle2 size={16} className="text-emerald-500" />
+                          <span>{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-indigo-50 rounded-2xl p-6 flex flex-col justify-center border border-indigo-100">
+                    <div className="text-center mb-4">
+                      <span className="text-indigo-900 font-bold block mb-1">方案費用</span>
+                      <span className="text-3xl font-black text-indigo-600">NT$ 880</span>
+                      <span className="text-indigo-400 text-sm ml-1">/ 月</span>
+                    </div>
+                    <button className="w-full bg-white border border-indigo-200 text-indigo-600 py-3 rounded-xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                      升級到 X-Biz
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-10 rounded-3xl border border-dashed border-slate-300 text-center">
+                <TrendingUp size={40} className="mx-auto text-slate-300 mb-4" />
                 <p className="text-slate-500 font-bold">歷史對話趨勢圖表預留區</p>
-                <p className="text-slate-400 text-sm mt-2">串接 LINE Webhook 後將自動解鎖此區域</p>
               </div>
             </div>
           )}
@@ -310,6 +353,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
+                {/* AI 機器人開關 */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <div className={`p-3 rounded-xl transition-colors ${config.isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-200 text-slate-500'}`}>
@@ -324,6 +368,38 @@ export default function DashboardPage() {
                     <input type="checkbox" name="isActive" checked={config.isActive} onChange={handleInputChange} className="sr-only peer" />
                     <div className="w-14 h-7 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full"></div>
                   </label>
+                </div>
+
+                {/* 🌟 修復回歸：AI 個性與語氣設定 🌟 */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                  <h3 className="font-bold text-slate-800 flex items-center text-lg">
+                    <Sparkles size={20} className="mr-2 text-indigo-500" /> AI 客服個性設定
+                  </h3>
+                  <div className="flex space-x-4">
+                    {[
+                      { id: 'enthusiastic', label: '🔥 熱情親切', desc: '口吻輕鬆且帶有 Emoji' },
+                      { id: 'professional', label: '💼 專業管家', desc: '簡潔有力、商務禮貌' }
+                    ].map((t) => (
+                      <button 
+                        key={t.id}
+                        onClick={() => setConfig({...config, tone: t.id})}
+                        className={`flex-1 p-4 rounded-2xl border-2 transition-all text-left ${config.tone === t.id ? 'border-indigo-600 bg-indigo-50 shadow-sm' : 'border-slate-100 hover:border-slate-200'}`}
+                      >
+                        <p className={`font-bold ${config.tone === t.id ? 'text-indigo-600' : 'text-slate-500'}`}>{t.label}</p>
+                        <p className="text-[10px] text-slate-400 mt-1">{t.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">給 AI 的特殊交代 (System Prompt)</label>
+                    <textarea 
+                      name="customRules" 
+                      value={config.customRules} 
+                      onChange={handleInputChange}
+                      className="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm h-24 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                      placeholder="例如：遇到客人詢問寵物入住，請委婉告知我們暫不開放..."
+                    />
+                  </div>
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
@@ -424,7 +500,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* LINE 串接頁面 */}
+          {/* 分頁 3: LINE 串接頁面 */}
           {activeTab === 'settings' && (
             <div className="animate-in fade-in duration-500 max-w-2xl">
               <h2 className="text-3xl font-bold mb-8">LINE 官方帳號通訊設定</h2>
