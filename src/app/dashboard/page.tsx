@@ -7,7 +7,7 @@ import {
   CheckCircle2, Bot, Database, LineChart, MessageSquare, 
   Plus, ArrowRight, LogOut, Trash2, Zap, LayoutDashboard,
   TrendingUp, Users, ShieldCheck, HelpCircle, Clock, Copy, AlertCircle,
-  CreditCard, Sparkles, Star
+  CreditCard, Sparkles, Star, Mail, Lock, UserPlus, LogIn
 } from 'lucide-react';
 
 // Firebase 相關模組匯入
@@ -16,7 +16,10 @@ import {
   getAuth, 
   signInAnonymously, 
   signInWithCustomToken, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
 } from 'firebase/auth';
 import { 
   getFirestore, 
@@ -31,12 +34,19 @@ import {
 
 export default function DashboardPage() {
   // --- Firebase 與 Auth 狀態 ---
+  const [auth, setAuth] = useState<any>(null);
   const [db, setDb] = useState<any>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
+  
+  // --- 登入註冊表單狀態 ---
+  const [isLoginView, setIsLoginView] = useState(true);
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authError, setAuthError] = useState("");
 
   // --- UI 與 業務狀態 ---
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'knowledge', 'settings'
+  const [activeTab, setActiveTab] = useState('dashboard'); 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [inputMessage, setInputMessage] = useState("");
@@ -80,27 +90,26 @@ export default function DashboardPage() {
         const mockConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
         try { firebaseConfig = JSON.parse(mockConfig); } catch (e) { firebaseConfig = null; }
       }
+      
       if (!firebaseConfig || !firebaseConfig.projectId) {
         setIsAuthReady(true);
         return;
       }
+
       try {
         const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
         const firestore = getFirestore(app);
-        const auth = getAuth(app);
+        const firebaseAuth = getAuth(app);
         setDb(firestore);
-        onAuthStateChanged(auth, async (user) => {
+        setAuth(firebaseAuth);
+
+        onAuthStateChanged(firebaseAuth, async (user) => {
           if (user) {
             setUserId(user.uid);
             setIsAuthReady(true);
           } else {
-            // @ts-ignore
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              // @ts-ignore
-              await signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
-            } else {
-              await signInAnonymously(auth);
-            }
+            setUserId(null);
+            setIsAuthReady(true);
           }
         });
       } catch (err) {
@@ -127,6 +136,26 @@ export default function DashboardPage() {
   }, [isAuthReady, userId, db]);
 
   // --- 3. 功能處理 ---
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError("");
+    if (!auth) return;
+
+    try {
+      if (isLoginView) {
+        await signInWithEmailAndPassword(auth, authEmail, authPassword);
+      } else {
+        await createUserWithEmailAndPassword(auth, authEmail, authPassword);
+      }
+    } catch (err: any) {
+      setAuthError(err.message.includes("auth/invalid-credential") ? "帳號或密碼錯誤" : "驗證失敗，請檢查格式");
+    }
+  };
+
+  const handleLogout = async () => {
+    if (auth) await signOut(auth);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const target = e.target as HTMLInputElement;
     const { name, value, type, checked } = target;
@@ -199,9 +228,88 @@ export default function DashboardPage() {
   };
 
   if (!isAuthReady) {
-    return <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white"><Bot size={48} className="animate-bounce text-indigo-400 mb-4" /><p className="text-lg font-bold">正在安全登入控制台...</p></div>;
+    return <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white"><Bot size={48} className="animate-bounce text-indigo-400 mb-4" /><p className="text-lg font-bold">正在準備加密環境...</p></div>;
   }
 
+  // --- 登入/註冊 介面渲染 ---
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+        {/* 背景裝飾 */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-600 rounded-full blur-[120px]"></div>
+        </div>
+
+        <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-10 relative z-10 animate-in fade-in zoom-in duration-500">
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
+              <Bot size={32} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">X-Bot 控制台</h1>
+            <p className="text-slate-500 mt-2 font-medium">請登入您的業者帳號以開始設定</p>
+          </div>
+
+          <form onSubmit={handleAuth} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">電子郵件</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input 
+                  type="email" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="name@company.com"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">密碼</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input 
+                  type="password" required value={authPassword} onChange={(e) => setAuthPassword(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            {authError && (
+              <div className="flex items-center space-x-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100">
+                <AlertCircle size={14} />
+                <span>{authError}</span>
+              </div>
+            )}
+
+            <button 
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center space-x-2"
+            >
+              {isLoginView ? <LogIn size={20} /> : <UserPlus size={20} />}
+              <span>{isLoginView ? '立即登入' : '註冊新帳號'}</span>
+            </button>
+          </form>
+
+          <div className="mt-8 text-center border-t border-slate-100 pt-6">
+            <button 
+              onClick={() => { setIsLoginView(!isLoginView); setAuthError(""); }}
+              className="text-indigo-600 font-bold hover:underline"
+            >
+              {isLoginView ? '還沒有帳號？點此註冊' : '已有帳號？點此登入'}
+            </button>
+            <div className="mt-4">
+              <Link href="/" className="text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-slate-600">
+                ← 返回產品首頁
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- 登入成功後的 後台主介面 ---
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
       
@@ -211,7 +319,7 @@ export default function DashboardPage() {
             <Bot size={28} className="text-indigo-400" />
             <h1 className="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">X-Bot</h1>
           </div>
-          <p className="text-[10px] text-slate-500 mt-2 font-mono break-all leading-tight">{userId || "DEMO_ACCOUNT"}</p>
+          <p className="text-[10px] text-slate-500 mt-2 font-mono break-all leading-tight">UID: {userId}</p>
         </div>
         
         <nav className="flex-1 mt-6 px-4 space-y-2">
@@ -226,9 +334,15 @@ export default function DashboardPage() {
           </button>
         </nav>
 
-        <div className="px-4 pb-6 mt-auto">
+        <div className="px-4 pb-6 mt-auto flex flex-col space-y-3">
+           <button 
+             onClick={handleLogout}
+             className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition border border-red-500/30"
+           >
+             <LogOut size={18} /><span>登出帳號</span>
+           </button>
            <Link href="/" className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition border border-slate-700">
-             <LogOut size={18} /><span>返回官網首頁</span>
+             <ArrowRight size={18} className="rotate-180" /><span>返回首頁</span>
            </Link>
         </div>
       </aside>
@@ -321,7 +435,6 @@ export default function DashboardPage() {
                   </label>
                 </div>
 
-                {/* AI 客服個性設定 */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
                   <h3 className="font-bold text-slate-800 flex items-center text-lg">
                     <Sparkles size={20} className="mr-2 text-indigo-500" /> AI 客服語氣設定
@@ -353,12 +466,11 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* 營運參數 */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6 overflow-hidden">
                   <h3 className="font-bold text-slate-800 flex items-center text-lg"><Settings size={20} className="mr-2 text-indigo-500" /> 核心營運參數</h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">時間限制</label>
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest font-mono">Operations Time</label>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-slate-50 p-2 rounded-xl border border-slate-100">
                           <span className="text-[9px] text-slate-500 mb-1 block">入住</span>
@@ -371,7 +483,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">網路設定</label>
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest font-mono">Network Access</label>
                       <div className="grid grid-cols-2 gap-2">
                         <input type="text" name="wifiSsid" value={config.wifiSsid} onChange={handleInputChange} className="w-full p-3 border rounded-xl bg-slate-50 outline-none focus:border-indigo-400 text-sm font-medium" placeholder="名稱" />
                         <input type="text" name="wifiPass" value={config.wifiPass} onChange={handleInputChange} className="w-full p-3 border rounded-xl bg-slate-50 outline-none focus:border-indigo-400 text-sm font-medium" placeholder="密碼" />
@@ -380,20 +492,19 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Q&A */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-slate-800 flex items-center text-lg"><HelpCircle size={20} className="mr-2 text-indigo-500" /> 特殊問答集 (Q&A)</h3>
+                    <h3 className="font-bold text-slate-800 flex items-center text-lg"><HelpCircle size={20} className="mr-2 text-indigo-500" /> 特殊問題訓練 (Q&A)</h3>
                     <button onClick={handleAddQA} className="text-xs bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl font-bold flex items-center hover:bg-indigo-100 transition-colors"><Plus size={16} className="mr-1" /> 新增問答</button>
                   </div>
                   <div className="space-y-4">
                     {qaList.map((qa) => (
-                      <div key={qa.id} className="p-5 border border-slate-100 rounded-2xl bg-slate-50 relative group transition-all hover:bg-white hover:shadow-md">
+                      <div key={qa.id} className="p-5 border border-slate-100 rounded-2xl bg-slate-50 relative group transition-all hover:bg-white hover:shadow-md border border-slate-200">
                         <button onClick={() => handleDeleteQA(qa.id)} className="absolute -top-2 -right-2 bg-white text-red-400 p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="flex items-start">
                             <span className="text-indigo-500 font-black mr-3 mt-2 text-xs">Q</span>
-                            <input value={qa.q} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, q: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm font-bold outline-none focus:border-indigo-500" placeholder="房客問題..." />
+                            <input value={qa.q} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, q: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm font-bold outline-none focus:border-indigo-500" placeholder="房客的問題..." />
                           </div>
                           <div className="flex items-start">
                             <span className="text-emerald-500 font-black mr-3 mt-2 text-xs">A</span>
@@ -464,7 +575,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* 🌟 復原：串接指南教學 🌟 */}
                 <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200 text-slate-600 text-xs leading-relaxed font-medium">
                    <div className="flex items-center space-x-2 mb-4">
                       <AlertCircle size={20} className="text-indigo-500" />
