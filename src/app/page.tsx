@@ -193,6 +193,25 @@ const DashboardComponent = ({ onNavigate }: any) => {
     finally { setIsSaving(false); }
   };
 
+  // 🌟 新增：處理 Webhook URL 複製 🌟
+  const handleCopyWebhook = () => {
+    if (typeof window === 'undefined') return;
+    const host = window.location.host;
+    const url = `https://${host}/api/webhook?userId=${userId || 'guest'}`;
+    const textArea = document.createElement("textarea");
+    textArea.value = url;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setSaveMessage("網址已複製到剪貼簿！");
+    } catch (err) {
+      console.error('無法複製', err);
+    }
+    document.body.removeChild(textArea);
+    setTimeout(() => setSaveMessage(""), 2000);
+  };
+
   const simulateAIResponse = (q: string) => {
     const text = q.toLowerCase();
     let reply = "抱歉，我還在學習這方面的知識，會請真人管家處理喔！😅";
@@ -241,9 +260,9 @@ const DashboardComponent = ({ onNavigate }: any) => {
           <p className="text-[10px] text-slate-500 mt-2 font-mono break-all leading-tight">UID: {userId}</p>
         </div>
         <nav className="flex-1 mt-6 px-4 space-y-2">
-          <button onClick={() => setActiveTab('dashboard')} className={`w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}><LayoutDashboard size={20} /><span>數據概覽</span></button>
-          <button onClick={() => setActiveTab('knowledge')} className={`w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'knowledge' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}><Database size={20} /><span>知識庫管理</span></button>
-          <button onClick={() => setActiveTab('settings')} className={`w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'settings' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}><Settings size={20} /><span>LINE 串接</span></button>
+          <button onClick={() => setActiveTab('dashboard')} className={`w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}><LayoutDashboard size={20} /><span>數據概覽</span></button>
+          <button onClick={() => setActiveTab('knowledge')} className={`w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'knowledge' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}><Database size={20} /><span>知識庫管理</span></button>
+          <button onClick={() => setActiveTab('settings')} className={`w-full text-left flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}><Settings size={20} /><span>LINE 串接</span></button>
         </nav>
         <div className="px-4 pb-6 mt-auto">
           <button onClick={() => signOut(authInstance)} className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500/10 transition"><LogOut size={18} /><span>登出系統</span></button>
