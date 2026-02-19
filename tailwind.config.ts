@@ -1,19 +1,20 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // 🌟 採用更寬鬆的掃描路徑，確保不論檔案在哪個層級都能被抓到
+  // 🌟 採用最嚴謹且完整的路徑，確保 src 資料夾下的所有內容都被掃描
   content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}", // 額外增加這行作為雙重保險
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
-      // 這裡保持空白，讓 page.tsx 中的任意顏色和樣式能直接生效
+      // 保持乾淨，讓 page.tsx 裡的類別直接控制顏色
     },
   },
-  // 增加這行可以確保即使有其他樣式衝突，Tailwind 也能優先套用
+  // 🌟 強制讓 Tailwind 的樣式具有最高優先權，解決樣式被 Next.js 預設樣式覆蓋的問題
   important: true, 
   plugins: [],
 };
