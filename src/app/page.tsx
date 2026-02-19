@@ -175,7 +175,8 @@ export default function LandingPage() {
                         {item.question}
                       </span>
                     </div>
-                    <span className="text-xs font-black text-slate-500 uppercase">{item.t || item.time}</span>
+                    {/* 修正點：將 item.t 改為 item.time */}
+                    <span className="text-xs font-black text-slate-500 uppercase">{item.time}</span>
                   </button>
                 ))}
               </div>
@@ -249,7 +250,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 特色與定價 (保持原樣，可視需要繼續增強) */}
+      {/* 特色區塊 */}
       <section id="features" className="py-32 container mx-auto px-6 text-center">
         <h2 className="text-4xl md:text-5xl font-black mb-16">更強大的功能，更好的體驗</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -286,6 +287,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* 定價方案 */}
       <section id="pricing" className="py-32 container mx-auto px-6 text-center">
         <h2 className="text-4xl md:text-5xl font-black mb-16">簡單透明的方案</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
