@@ -1,19 +1,20 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // 🌟 調整路徑，確保 Next.js 在編譯時能 100% 抓取到所有層級的組件
+  // 🌟 採用更寬鬆的掃描路徑，確保不論檔案在哪個層級都能被抓到
   content: [
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
-      // 保持乾淨，讓 page.tsx 裡的 Tailwind 類別直接控制顏色
+      // 這裡保持空白，讓 page.tsx 中的任意顏色和樣式能直接生效
     },
   },
+  // 增加這行可以確保即使有其他樣式衝突，Tailwind 也能優先套用
+  important: true, 
   plugins: [],
 };
 
