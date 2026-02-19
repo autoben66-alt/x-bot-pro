@@ -40,16 +40,16 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-100 overflow-x-hidden selection:bg-indigo-500/30">
       
-      {/* 背景裝飾光暈 */}
+      {/* 背景裝飾光暈 - 優化透明度與顏色層次 */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-600/10 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[-5%] left-[-5%] w-[50%] h-[50%] bg-indigo-600/20 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px]"></div>
       </div>
 
       {/* 導覽列 */}
       <nav className="container mx-auto px-6 py-8 flex justify-between items-center relative z-50">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Bot size={24} className="text-white" />
           </div>
           <span className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
@@ -61,7 +61,6 @@ export default function LandingPage() {
           <a href="#features" className="hover:text-white transition">功能特色</a>
           <a href="#process" className="hover:text-white transition">運作流程</a>
           <a href="#pricing" className="hover:text-white transition">方案計價</a>
-          <a href="#" className="hover:text-white transition">關於我們</a>
         </div>
 
         <Link 
@@ -73,19 +72,19 @@ export default function LandingPage() {
       </nav>
 
       {/* 英雄區塊 (Hero Section) */}
-      <section className="relative pt-20 pb-32 px-6 z-10">
+      <section className="relative pt-12 pb-32 px-6 z-10">
         <div className="container mx-auto text-center">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/5 text-indigo-300 text-sm font-bold mb-8 animate-fade-in">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-bold mb-8">
             <Sparkles size={14} />
             <span>X-Islands 旗下全新 AI 品牌</span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[1.1] tracking-tighter">
-            不再為了 <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400 italic">重複的問題</span> <br />
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-[1.1] tracking-tighter">
+            不再為了 <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400 italic">重複的問題</span> <br />
             犧牲您的睡眠時間
           </h1>
           
-          <p className="text-xl md:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+          <p className="text-lg md:text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed font-medium px-4">
             專為離島民宿打造。當您在睡覺、帶導覽、或享受生活時，<br className="hidden md:block" />
             X-Bot 在 LINE 上 24 小時親切接待您的客人。
           </p>
@@ -93,7 +92,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <Link 
               href="/dashboard"
-              className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-10 py-5 rounded-2xl font-black text-xl hover:shadow-[0_0_30px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 active:scale-95"
+              className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-10 py-5 rounded-2xl font-black text-xl hover:shadow-[0_0_30px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 active:scale-95"
             >
               免費啟動 AI 管家
             </Link>
@@ -109,14 +108,42 @@ export default function LandingPage() {
             <div className="flex items-center space-x-2"><Shield size={16}/> <span>100% 準確回覆</span></div>
           </div>
         </div>
+
+        {/* 修正後的模擬介面預覽圖 - 移除不穩定的 transform */}
+        <div className="mt-20 relative w-full max-w-5xl mx-auto">
+           <div className="w-full h-[300px] md:h-[450px] bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden flex flex-col md:flex-row shadow-indigo-500/10 transition-all hover:border-slate-700">
+              <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-slate-800 p-4 bg-slate-950/50">
+                <div className="h-4 w-24 bg-slate-800 rounded mb-6"></div>
+                <div className="space-y-3">
+                  <div className="h-8 w-full bg-slate-800 rounded"></div>
+                  <div className="h-8 w-full bg-slate-800 rounded"></div>
+                  <div className="h-8 w-full bg-indigo-600/20 border border-indigo-500/30 rounded flex items-center px-3">
+                    <div className="w-2 h-2 rounded-full bg-indigo-500 mr-2"></div>
+                    <div className="h-2 w-16 bg-indigo-500/50 rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 p-6 flex flex-col bg-slate-900">
+                <div className="h-8 w-48 bg-slate-800 rounded mb-8"></div>
+                <div className="flex-1 space-y-4">
+                  <div className="flex justify-end"><div className="h-12 w-48 md:w-64 bg-indigo-500/40 rounded-2xl rounded-tr-none border border-indigo-500/30"></div></div>
+                  <div className="flex justify-start"><div className="h-20 w-64 md:w-80 bg-slate-800 rounded-2xl rounded-tl-none border border-slate-700 flex flex-col justify-center px-4 space-y-2">
+                    <div className="h-2 w-full bg-slate-600 rounded"></div>
+                    <div className="h-2 w-2/3 bg-slate-600 rounded"></div>
+                  </div></div>
+                  <div className="flex justify-end"><div className="h-12 w-32 md:w-48 bg-indigo-500/40 rounded-2xl rounded-tr-none border border-indigo-500/30"></div></div>
+                </div>
+              </div>
+           </div>
+        </div>
       </section>
 
       {/* 情境共鳴區塊 (The Struggle) */}
-      <section className="py-24 bg-[#0a0f1e] border-y border-slate-800/50">
-        <div className="container mx-auto px-6">
+      <section className="py-24 bg-[#0a0f1e] border-y border-slate-800/50 relative overflow-hidden">
+        <div className="container mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight text-white">
                 您是否也厭倦了 <br />
                 這些「機械式」的對話？
               </h2>
@@ -126,39 +153,42 @@ export default function LandingPage() {
                   { q: "船票多少錢？要去哪裡搭？", time: "帶導覽中..." },
                   { q: "民宿地址在哪？怎麼去？", time: "忙著清潔中..." }
                 ].map((item, i) => (
-                  <div key={i} className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl flex justify-between items-center group hover:border-indigo-500/30 transition">
+                  <div key={i} className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex justify-between items-center group hover:border-indigo-500/40 transition-colors">
                     <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-red-500 mr-4"></div>
-                      <span className="text-lg font-medium text-slate-300">{item.q}</span>
+                      <div className="w-2 h-2 rounded-full bg-red-500 mr-4 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                      <span className="text-lg font-medium text-slate-200">{item.q}</span>
                     </div>
-                    <span className="text-xs text-slate-500 font-bold">{item.time}</span>
+                    <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">{item.time}</span>
                   </div>
                 ))}
               </div>
-              <p className="mt-8 text-slate-400 text-lg">
+              <p className="mt-8 text-slate-400 text-lg leading-relaxed">
                 這些問題雖然簡單，卻不斷切碎您的休息時間。
-                <span className="text-indigo-400 font-bold"> 讓 X-Bot 幫您擋下 80% 的重複訊息。</span>
+                <span className="text-indigo-400 font-bold block mt-2"> 讓 X-Bot 幫您擋下 80% 的重複訊息。</span>
               </p>
             </div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full"></div>
-              <div className="relative bg-slate-800 rounded-3xl p-6 border border-slate-700 shadow-2xl">
-                <div className="flex items-center space-x-2 mb-6">
-                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+            
+            <div className="relative p-1">
+              <div className="absolute inset-0 bg-indigo-600/20 blur-[60px] rounded-full"></div>
+              <div className="relative bg-slate-900/90 rounded-3xl p-8 border border-slate-700 shadow-2xl backdrop-blur-sm">
+                <div className="flex items-center space-x-2 mb-8">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="flex justify-start">
-                    <div className="bg-slate-700 h-10 w-2/3 rounded-xl rounded-tl-none animate-pulse"></div>
+                    <div className="bg-slate-800 h-10 w-2/3 rounded-xl rounded-tl-none border border-slate-700 opacity-50"></div>
                   </div>
                   <div className="flex justify-end">
-                    <div className="bg-indigo-600 h-12 w-3/4 rounded-xl rounded-tr-none flex items-center px-4 text-sm font-bold">
-                      「您好！本館 WiFi 密碼為 bayliu888，祝您上網愉快 😊」
+                    <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 p-4 rounded-2xl rounded-tr-none shadow-lg shadow-indigo-500/20 max-w-[90%]">
+                      <p className="text-sm font-bold text-white leading-relaxed">
+                        「您好！本館 WiFi 密碼為 bayliu888，密碼全小寫，祝您上網愉快 😊」
+                      </p>
                     </div>
                   </div>
                   <div className="flex justify-start">
-                    <div className="bg-slate-700 h-10 w-1/2 rounded-xl rounded-tl-none"></div>
+                    <div className="bg-slate-800 h-10 w-1/2 rounded-xl rounded-tl-none border border-slate-700 opacity-50"></div>
                   </div>
                 </div>
               </div>
@@ -170,7 +200,7 @@ export default function LandingPage() {
       {/* 功能特色 (Features) */}
       <section id="features" className="py-32 container mx-auto px-6">
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-black mb-6">更強大的功能，更好的體驗</h2>
+          <h2 className="text-4xl md:text-5xl font-black mb-6 text-white">更強大的功能，更好的體驗</h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">不只是一個回覆機器人，它是真正懂旅遊業的智能助理。</p>
         </div>
         
@@ -197,11 +227,11 @@ export default function LandingPage() {
               desc: "遇到殺價或複雜訂房，AI 會聰明地通知您親自處理。" 
             }
           ].map((feature, i) => (
-            <div key={i} className="bg-white/5 border border-slate-800 p-8 rounded-3xl hover:bg-white/10 transition group">
-              <div className="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center mb-6 text-indigo-400 group-hover:scale-110 transition">
+            <div key={i} className="bg-slate-900/50 border border-slate-800 p-8 rounded-3xl hover:bg-slate-800 transition-all hover:border-indigo-500/30 group">
+              <div className="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center mb-6 text-indigo-400 group-hover:scale-110 transition-transform">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">{feature.title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{feature.desc}</p>
             </div>
           ))}
@@ -212,7 +242,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-32 bg-[#020617] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-black mb-6">簡單透明的方案</h2>
+            <h2 className="text-4xl md:text-5xl font-black mb-6 text-white">簡單透明的方案</h2>
             <p className="text-slate-400 text-lg">選擇最適合您的產品，開始您的數位轉型。</p>
           </div>
 
@@ -220,24 +250,24 @@ export default function LandingPage() {
             {pricingPlans.map((plan, i) => (
               <div 
                 key={i} 
-                className={`relative rounded-3xl p-8 flex flex-col ${
+                className={`relative rounded-3xl p-8 flex flex-col transition-all hover:translate-y-[-8px] ${
                   plan.highlight 
-                  ? 'bg-gradient-to-b from-indigo-600/20 to-indigo-900/40 border-2 border-indigo-500 shadow-2xl shadow-indigo-500/20' 
-                  : 'bg-slate-900/50 border border-slate-800'
+                  ? 'bg-gradient-to-b from-indigo-900/40 to-[#020617] border-2 border-indigo-500 shadow-2xl shadow-indigo-500/20' 
+                  : 'bg-slate-900/30 border border-slate-800'
                 }`}
               >
                 {plan.highlight && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-500/50">
                     最受歡迎
                   </div>
                 )}
                 <div className="mb-8">
-                  <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                  <h3 className="text-xl font-bold mb-2 text-white">{plan.name}</h3>
                   <div className="flex items-baseline space-x-1">
                     <span className="text-4xl font-black text-white">NT$ {plan.price}</span>
-                    <span className="text-slate-500 font-bold">/ 月</span>
+                    <span className="text-slate-500 font-bold text-sm">/ 月</span>
                   </div>
-                  <p className="mt-4 text-slate-400 text-sm leading-relaxed h-12">
+                  <p className="mt-4 text-slate-400 text-sm leading-relaxed min-h-[48px]">
                     {plan.description}
                   </p>
                 </div>
@@ -255,7 +285,7 @@ export default function LandingPage() {
 
                 <button className={`w-full py-4 rounded-2xl font-black transition-all active:scale-95 ${
                   plan.highlight 
-                  ? 'bg-indigo-500 text-white hover:bg-indigo-400 shadow-lg shadow-indigo-500/30' 
+                  ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/30' 
                   : 'bg-slate-800 text-white hover:bg-slate-700 border border-slate-700'
                 }`}>
                   {plan.buttonText}
@@ -273,39 +303,39 @@ export default function LandingPage() {
             <div className="mb-8 md:mb-0">
               <div className="flex items-center space-x-2 mb-4">
                 <Bot size={24} className="text-indigo-400" />
-                <span className="text-xl font-black tracking-tight">X-Bot</span>
+                <span className="text-xl font-black tracking-tight text-white">X-Bot</span>
               </div>
-              <p className="text-slate-500 text-sm max-w-xs">
+              <p className="text-slate-500 text-sm max-w-xs leading-relaxed">
                 X-Islands 離島旅遊入口網旗下產品。<br />
                 專注於提升地方觀光產業的數位競爭力。
               </p>
             </div>
             
             <div className="flex space-x-12">
-              <div className="space-y-4">
+              <div className="space-y-4 text-center md:text-left">
                 <h4 className="font-bold text-slate-300 text-sm uppercase tracking-widest">產品</h4>
-                <ul className="space-y-2 text-slate-500 text-sm">
-                  <li><a href="#" className="hover:text-white transition">功能介紹</a></li>
-                  <li><a href="#" className="hover:text-white transition">解決方案</a></li>
-                  <li><a href="#" className="hover:text-white transition">定價方案</a></li>
+                <ul className="space-y-2 text-slate-500 text-sm font-medium">
+                  <li><a href="#" className="hover:text-white transition-colors">功能介紹</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">解決方案</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">定價方案</a></li>
                 </ul>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 text-center md:text-left">
                 <h4 className="font-bold text-slate-300 text-sm uppercase tracking-widest">公司</h4>
-                <ul className="space-y-2 text-slate-500 text-sm">
-                  <li><a href="#" className="hover:text-white transition">關於我們</a></li>
-                  <li><a href="#" className="hover:text-white transition">隱私政策</a></li>
-                  <li><a href="#" className="hover:text-white transition">服務條款</a></li>
+                <ul className="space-y-2 text-slate-500 text-sm font-medium">
+                  <li><a href="#" className="hover:text-white transition-colors">關於我們</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">隱私政策</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">服務條款</a></li>
                 </ul>
               </div>
             </div>
           </div>
           
-          <div className="mt-20 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center text-slate-600 text-[10px] font-bold uppercase tracking-widest">
+          <div className="mt-20 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center text-slate-600 text-[10px] font-bold uppercase tracking-widest gap-4">
             <p>© 2024 X-Islands Tech. All Rights Reserved.</p>
-            <div className="mt-4 md:mt-0 flex space-x-6">
-              <a href="https://www.x-islands.com/" className="hover:text-white transition">X-Islands 入口網</a>
-              <a href="#" className="hover:text-white transition">X-Match 媒合網</a>
+            <div className="flex space-x-6">
+              <a href="https://www.x-islands.com/" className="hover:text-white transition-colors">X-Islands 入口網</a>
+              <a href="https://x-match-platform.vercel.app/" className="hover:text-white transition-colors">X-Match 媒合網</a>
             </div>
           </div>
         </div>
