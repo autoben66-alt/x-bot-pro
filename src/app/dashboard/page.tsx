@@ -66,12 +66,35 @@ export default function DashboardPage() {
     activeUsers: 89
   });
 
-  // --- 1. Firebase 初始化 ---
+  // --- 1. Firebase 初始化 (支援 Vercel 與 模擬環境) ---
   useEffect(() => {
     const startFirebase = async () => {
-      // @ts-ignore
-      const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-      if (!firebaseConfig.apiKey) return;
+      let firebaseConfig;
+      
+      // 1. 優先嘗試從 Vercel 環境變數讀取
+      if (process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
+        try {
+          firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG);
+        } catch (e) {
+          console.error("Vercel config parse error");
+        }
+      } 
+      
+      // 2. 若無環境變數，則讀取 Canvas 模擬變數
+      if (!firebaseConfig || !firebaseConfig.apiKey) {
+        // @ts-ignore
+        const mockConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+        try {
+          firebaseConfig = JSON.parse(mockConfig);
+        } catch (e) {
+          firebaseConfig = {};
+        }
+      }
+
+      if (!firebaseConfig.apiKey) {
+        console.warn("Firebase config not found. AI features will be in demo mode.");
+        return;
+      }
 
       const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
       const firestore = getFirestore(app);
@@ -101,7 +124,7 @@ export default function DashboardPage() {
     if (!isAuthReady || !userId || !db) return;
 
     // @ts-ignore
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'x-bot-pro-app';
     const configPath = doc(db, 'artifacts', appId, 'users', userId, 'settings', 'config');
 
     // 監聽所有設定與問答庫內容
@@ -123,12 +146,16 @@ export default function DashboardPage() {
   };
 
   const handleSave = async () => {
-    if (!db || !userId) return;
+    if (!db || !userId) {
+      setSaveMessage("Demo 模式：設定已暫存。");
+      setTimeout(() => setSaveMessage(""), 3000);
+      return;
+    }
     setIsSaving(true);
     
     try {
       // @ts-ignore
-      const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
+      const appId = typeof __app_id !== 'undefined' ? __app_id : 'x-bot-pro-app';
       const configPath = doc(db, 'artifacts', appId, 'users', userId, 'settings', 'config');
       
       // 同步儲存所有資訊，包含問答清單
@@ -143,7 +170,7 @@ export default function DashboardPage() {
       setTimeout(() => setSaveMessage(""), 3000);
     } catch (error) {
       console.error("儲存失敗:", error);
-      setSaveMessage("儲存失敗，請檢查網路。");
+      setSaveMessage("儲存失敗，請檢查網路權限。");
     } finally {
       setIsSaving(false);
     }
@@ -159,9 +186,16 @@ export default function DashboardPage() {
   };
 
   const handleCopyWebhook = () => {
-    const url = `https://${window.location.host}/api/webhook?userId=${userId}`;
-    // @ts-ignore
-    if (typeof document !== 'undefined') {
+    const host = typeof window !== 'undefined' ? window.location.host : 'your-app.vercel.app';
+    const url = `https://${host}/api/webhook?userId=${userId || 'guest'}`;
+    
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        setSaveMessage("網址已複製到剪貼簿！");
+        setTimeout(() => setSaveMessage(""), 2000);
+      });
+    } else {
+      // Fallback for document.execCommand
       const el = document.createElement('textarea');
       el.value = url;
       document.body.appendChild(el);
@@ -201,7 +235,7 @@ export default function DashboardPage() {
     }, 800);
   };
 
-  if (!isAuthReady) {
+  if (!isAuthReady && db) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
         <Bot size={48} className="animate-bounce text-indigo-400 mb-4" />
@@ -220,17 +254,17 @@ export default function DashboardPage() {
             <Bot size={28} className="text-indigo-400" />
             <h1 className="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">X-Bot</h1>
           </div>
-          <p className="text-[10px] text-slate-500 mt-2 font-mono break-all">{userId}</p>
+          <p className="text-[10px] text-slate-500 mt-2 font-mono break-all">{userId || "DEMO_ACCOUNT"}</p>
         </div>
         
         <nav className="flex-1 mt-6 px-4 space-y-2">
-          <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}>
+          <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}>
             <LayoutDashboard size={20} /><span>數據概覽</span>
           </button>
           <button onClick={() => setActiveTab('knowledge')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'knowledge' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800'}`}>
             <Database size={20} /><span>知識庫管理</span>
           </button>
-          <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'settings' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}>
+          <button onClick={() => setActiveTab('settings')} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800'}`}>
             <Settings size={20} /><span>LINE 串接</span>
           </button>
         </nav>
@@ -257,7 +291,7 @@ export default function DashboardPage() {
                   { label: "總訊息量", val: analytics.totalMessages, icon: <MessageSquare />, color: "text-blue-600", bg: "bg-blue-100" },
                   { label: "活躍房客", val: analytics.activeUsers, icon: <Users />, color: "text-orange-600", bg: "bg-orange-100" },
                 ].map((s, i) => (
-                  <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                  <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
                     <div className={`w-12 h-12 ${s.bg} ${s.color} rounded-xl flex items-center justify-center mb-4`}>{s.icon}</div>
                     <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{s.label}</p>
                     <p className={`text-3xl font-black mt-1 ${s.color}`}>{s.val}</p>
@@ -267,6 +301,7 @@ export default function DashboardPage() {
               <div className="bg-white p-20 rounded-3xl border border-dashed border-slate-300 text-center">
                 <TrendingUp size={48} className="mx-auto text-slate-300 mb-4" />
                 <p className="text-slate-500 font-bold">歷史對話趨勢圖表預留區</p>
+                <p className="text-slate-400 text-sm mt-2">連線正式資料庫後即時更新</p>
               </div>
             </div>
           )}
@@ -278,14 +313,14 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center">
                   <h2 className="text-3xl font-bold">知識庫管理</h2>
                   <div className="flex items-center space-x-2 text-emerald-600 text-sm font-bold">
-                    <Zap size={16} /> <span>即時同步已開啟</span>
+                    <Zap size={16} /> <span>即時同步狀態：{db ? '在線' : '模擬'}</span>
                   </div>
                 </div>
 
                 {/* 機器人總開關 */}
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 flex justify-between items-center">
                   <div className="flex items-center space-x-4">
-                    <div className={`p-3 rounded-xl ${config.isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                    <div className={`p-3 rounded-xl transition-colors ${config.isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
                       <Power size={24} />
                     </div>
                     <div>
@@ -324,7 +359,7 @@ export default function DashboardPage() {
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="font-bold text-slate-800 flex items-center"><HelpCircle size={20} className="mr-2 text-indigo-500" /> 常見問題與自訂回覆</h3>
-                    <button onClick={handleAddQA} className="text-xs bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl font-bold flex items-center"><Plus size={16} className="mr-1" /> 新增</button>
+                    <button onClick={handleAddQA} className="text-xs bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl font-bold flex items-center hover:bg-indigo-100 transition-colors"><Plus size={16} className="mr-1" /> 新增</button>
                   </div>
                   <div className="space-y-4">
                     {qaList.length === 0 && <p className="text-center py-10 text-slate-400 text-sm">尚未建立問答，點擊「新增」來訓練 AI</p>}
@@ -332,8 +367,8 @@ export default function DashboardPage() {
                       <div key={qa.id} className="p-4 border border-slate-100 rounded-2xl bg-slate-50 relative group">
                         <button onClick={() => handleDeleteQA(qa.id)} className="absolute -top-2 -right-2 bg-white text-red-400 p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="flex items-start"><span className="text-indigo-500 font-black mr-2 mt-2 text-xs">Q</span><input value={qa.q} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, q: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm font-bold focus:border-indigo-500 outline-none" /></div>
-                          <div className="flex items-start"><span className="text-emerald-500 font-black mr-2 mt-2 text-xs">A</span><textarea value={qa.a} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, a: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm h-12 outline-none focus:border-emerald-500" /></div>
+                          <div className="flex items-start"><span className="text-indigo-500 font-black mr-2 mt-2 text-xs">Q</span><input value={qa.q} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, q: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm font-bold focus:border-indigo-500 outline-none" placeholder="問題..." /></div>
+                          <div className="flex items-start"><span className="text-emerald-500 font-black mr-2 mt-2 text-xs">A</span><textarea value={qa.a} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, a: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm h-12 outline-none focus:border-emerald-500" placeholder="答案..." /></div>
                         </div>
                       </div>
                     ))}
@@ -345,8 +380,8 @@ export default function DashboardPage() {
                   <div className="flex items-center text-emerald-600 font-bold opacity-0 transition-opacity" style={{ opacity: saveMessage ? 1 : 0 }}>
                     <CheckCircle2 size={20} className="mr-2" /> {saveMessage}
                   </div>
-                  <button onClick={handleSave} disabled={isSaving} className={`bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-100 transition transform active:scale-95 ${isSaving ? 'opacity-50' : 'hover:bg-indigo-700'}`}>
-                    <Save size={20} className="inline mr-2" /> {isSaving ? '訓練同步中...' : '儲存並更新 AI 知識庫'}
+                  <button onClick={handleSave} disabled={isSaving} className={`bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-100 transition transform active:scale-95 ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'}`}>
+                    <Save size={20} className="inline mr-2" /> {isSaving ? '同步中...' : '儲存並更新 AI 知識庫'}
                   </button>
                 </div>
               </div>
@@ -364,19 +399,19 @@ export default function DashboardPage() {
                       <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white"><Bot size={20} /></div>
                       <div>
                         <div className="font-bold text-sm leading-none">{config.shopName || "AI 測試"}</div>
-                        <div className="text-[9px] text-green-400 mt-1">● 智能回覆系統已就緒</div>
+                        <div className="text-[9px] text-green-400 mt-1 font-medium italic">● 智能回覆系統已就緒</div>
                       </div>
                     </div>
                     <div className="flex-1 bg-slate-800 bg-opacity-30 overflow-y-auto p-4 space-y-4">
                       {chatHistory.map((m, i) => (
                         <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[85%] p-3.5 rounded-2xl text-[13px] ${m.role === 'user' ? 'bg-emerald-400 text-black rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none'}`}>{m.content}</div>
+                          <div className={`max-w-[85%] p-3.5 rounded-2xl text-[13px] leading-relaxed ${m.role === 'user' ? 'bg-emerald-400 text-black rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none'}`}>{m.content}</div>
                         </div>
                       ))}
                     </div>
                     <form onSubmit={handleSendMessage} className="bg-white p-3 flex items-center space-x-2 rounded-b-3xl pb-6">
-                      <input type="text" value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} placeholder="點擊此處測試發問..." className="flex-1 px-4 py-2 bg-slate-50 rounded-full text-sm outline-none border border-slate-100" />
-                      <button type="submit" className="bg-indigo-600 p-2.5 rounded-full text-white"><ArrowRight size={18} /></button>
+                      <input type="text" value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} placeholder="測試發問..." className="flex-1 px-4 py-2 bg-slate-50 rounded-full text-sm outline-none border border-slate-100 focus:ring-1 focus:ring-indigo-500 transition-all" />
+                      <button type="submit" className="bg-indigo-600 p-2.5 rounded-full text-white shadow hover:bg-indigo-500 active:scale-90 transition-all"><ArrowRight size={18} /></button>
                     </form>
                   </div>
                 </div>
@@ -392,27 +427,27 @@ export default function DashboardPage() {
                 <div className="p-4 bg-green-50 border border-green-100 rounded-2xl flex items-center space-x-4">
                    <CheckCircle2 className="text-green-600" />
                    <div className="flex-1">
-                      <p className="text-green-800 font-bold">目前連線狀態：正常</p>
-                      <p className="text-green-600 text-xs">Vercel Webhook 與 LINE 伺服器通訊中</p>
+                      <p className="text-green-800 font-bold">通訊狀態：{userId ? '已驗證' : '模擬中'}</p>
+                      <p className="text-green-600 text-xs">您的 Webhook 已準備好接收 LINE 訊息</p>
                    </div>
                 </div>
                 
                 <div className="space-y-4">
                   <label className="block text-sm font-bold text-slate-700">LINE Messaging API Token</label>
-                  <input type="password" name="lineToken" value={config.lineToken} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl" placeholder="請在此貼上您的 Channel Access Token" />
+                  <input type="password" name="lineToken" value={config.lineToken} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Channel Access Token (long-lived)" />
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-bold text-slate-700">Webhook URL (複製此網址貼到 LINE 後台)</label>
+                  <label className="block text-sm font-bold text-slate-700">Webhook URL</label>
                   <div className="flex space-x-2">
-                    <input type="text" readOnly value={`https://${window.location.host}/api/webhook?userId=${userId}`} className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl text-indigo-600 font-mono text-xs" />
-                    <button onClick={handleCopyWebhook} className="bg-slate-800 text-white px-6 py-4 rounded-xl font-bold text-sm flex items-center"><Copy size={18} className="mr-2" /> 複製</button>
+                    <input type="text" readOnly value={`https://${typeof window !== 'undefined' ? window.location.host : '...'}/api/webhook?userId=${userId || 'guest'}`} className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl text-indigo-600 font-mono text-xs" />
+                    <button onClick={handleCopyWebhook} className="bg-slate-800 text-white px-6 py-4 rounded-xl font-bold text-sm flex items-center hover:bg-slate-700 active:scale-95 transition-all"><Copy size={18} className="mr-2" /> 複製</button>
                   </div>
                 </div>
 
-                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 text-amber-800 text-xs flex items-start space-x-2">
+                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 text-amber-800 text-xs flex items-start space-x-2 leading-relaxed">
                    <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                   <p>請確保您的 LINE 官方帳號後台已開啟「Webhook」功能，並且「回應模式」設為「聊天機器人」。</p>
+                   <p>請確保您的 LINE 官方帳號後台：<br/>1. 已開啟「Webhook」功能。<br/>2. 「回應模式」設為「聊天機器人」。<br/>3. Webhook URL 結尾必須包含您的 <b>userId</b> 參數。</p>
                 </div>
               </div>
             </div>
