@@ -69,7 +69,7 @@ export default function DashboardPage() {
   // --- 1. Firebase 初始化 (支援 Vercel 與 模擬環境) ---
   useEffect(() => {
     const startFirebase = async () => {
-      let firebaseConfig;
+      let firebaseConfig: any = null;
       
       // 1. 優先嘗試從 Vercel 環境變數讀取
       if (process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
@@ -87,11 +87,11 @@ export default function DashboardPage() {
         try {
           firebaseConfig = JSON.parse(mockConfig);
         } catch (e) {
-          firebaseConfig = {};
+          firebaseConfig = null;
         }
       }
 
-      if (!firebaseConfig.apiKey) {
+      if (!firebaseConfig || !firebaseConfig.apiKey) {
         console.warn("Firebase config not found. AI features will be in demo mode.");
         return;
       }
@@ -107,9 +107,13 @@ export default function DashboardPage() {
           setIsAuthReady(true);
         } else {
           // @ts-ignore
-          if (typeof __initial_auth_token !== 'undefined') {
-            // @ts-ignore
-            await signInWithCustomToken(auth, __initial_auth_token);
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            try {
+              // @ts-ignore
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } catch (e) {
+              await signInAnonymously(auth);
+            }
           } else {
             await signInAnonymously(auth);
           }
@@ -140,14 +144,15 @@ export default function DashboardPage() {
   }, [isAuthReady, userId, db]);
 
   // --- 3. 處理功能函數 ---
-  const handleInputChange = (e: any) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const target = e.target as HTMLInputElement;
+    const { name, value, type, checked } = target;
     setConfig(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleSave = async () => {
     if (!db || !userId) {
-      setSaveMessage("Demo 模式：設定已暫存。");
+      setSaveMessage("Demo 模式：設定已暫存至本地。");
       setTimeout(() => setSaveMessage(""), 3000);
       return;
     }
@@ -170,7 +175,7 @@ export default function DashboardPage() {
       setTimeout(() => setSaveMessage(""), 3000);
     } catch (error) {
       console.error("儲存失敗:", error);
-      setSaveMessage("儲存失敗，請檢查網路權限。");
+      setSaveMessage("儲存失敗，請檢查權限。");
     } finally {
       setIsSaving(false);
     }
@@ -186,25 +191,22 @@ export default function DashboardPage() {
   };
 
   const handleCopyWebhook = () => {
-    const host = typeof window !== 'undefined' ? window.location.host : 'your-app.vercel.app';
+    if (typeof window === 'undefined') return;
+    const host = window.location.host;
     const url = `https://${host}/api/webhook?userId=${userId || 'guest'}`;
     
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(() => {
-        setSaveMessage("網址已複製到剪貼簿！");
-        setTimeout(() => setSaveMessage(""), 2000);
-      });
-    } else {
-      // Fallback for document.execCommand
-      const el = document.createElement('textarea');
-      el.value = url;
-      document.body.appendChild(el);
-      el.select();
+    const textArea = document.createElement("textarea");
+    textArea.value = url;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
       document.execCommand('copy');
-      document.body.removeChild(el);
-      setSaveMessage("網址已複製到剪貼簿！");
-      setTimeout(() => setSaveMessage(""), 2000);
+      setSaveMessage("Webhook 網址已複製！");
+    } catch (err) {
+      console.error('無法複製', err);
     }
+    document.body.removeChild(textArea);
+    setTimeout(() => setSaveMessage(""), 2000);
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -313,7 +315,7 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center">
                   <h2 className="text-3xl font-bold">知識庫管理</h2>
                   <div className="flex items-center space-x-2 text-emerald-600 text-sm font-bold">
-                    <Zap size={16} /> <span>即時同步狀態：{db ? '在線' : '模擬'}</span>
+                    <Zap size={16} /> <span>同步狀態：{db ? '雲端在線' : '本地模擬'}</span>
                   </div>
                 </div>
 
@@ -325,7 +327,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="font-bold text-lg">AI 服務狀態</h3>
-                      <p className="text-sm text-slate-500">{config.isActive ? '正與您的 LINE 官方帳號連動中' : '已停止自動回覆'}</p>
+                      <p className="text-sm text-slate-500">{config.isActive ? '正在 LINE 官方帳號執行中' : '已停止自動回覆'}</p>
                     </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -339,10 +341,10 @@ export default function DashboardPage() {
                   <h3 className="font-bold text-slate-800 flex items-center"><Settings size={20} className="mr-2 text-indigo-500" /> 民宿營運參數</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <label className="block text-xs font-black text-slate-400 uppercase">入住/退房</label>
+                      <label className="block text-xs font-black text-slate-400 uppercase">入住/退房時間</label>
                       <div className="flex space-x-2">
-                        <input type="time" name="checkIn" value={config.checkIn} onChange={handleInputChange} className="flex-1 p-3 border rounded-xl bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none" />
-                        <input type="time" name="checkOut" value={config.checkOut} onChange={handleInputChange} className="flex-1 p-3 border rounded-xl bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                        <input type="time" name="checkIn" value={config.checkIn} onChange={handleInputChange} className="flex-1 p-3 border rounded-xl bg-slate-50 outline-none" />
+                        <input type="time" name="checkOut" value={config.checkOut} onChange={handleInputChange} className="flex-1 p-3 border rounded-xl bg-slate-50 outline-none" />
                       </div>
                     </div>
                     <div className="space-y-4">
@@ -359,7 +361,7 @@ export default function DashboardPage() {
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="font-bold text-slate-800 flex items-center"><HelpCircle size={20} className="mr-2 text-indigo-500" /> 常見問題與自訂回覆</h3>
-                    <button onClick={handleAddQA} className="text-xs bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl font-bold flex items-center hover:bg-indigo-100 transition-colors"><Plus size={16} className="mr-1" /> 新增</button>
+                    <button onClick={handleAddQA} className="text-xs bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl font-bold flex items-center"><Plus size={16} className="mr-1" /> 新增</button>
                   </div>
                   <div className="space-y-4">
                     {qaList.length === 0 && <p className="text-center py-10 text-slate-400 text-sm">尚未建立問答，點擊「新增」來訓練 AI</p>}
@@ -367,8 +369,8 @@ export default function DashboardPage() {
                       <div key={qa.id} className="p-4 border border-slate-100 rounded-2xl bg-slate-50 relative group">
                         <button onClick={() => handleDeleteQA(qa.id)} className="absolute -top-2 -right-2 bg-white text-red-400 p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="flex items-start"><span className="text-indigo-500 font-black mr-2 mt-2 text-xs">Q</span><input value={qa.q} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, q: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm font-bold focus:border-indigo-500 outline-none" placeholder="問題..." /></div>
-                          <div className="flex items-start"><span className="text-emerald-500 font-black mr-2 mt-2 text-xs">A</span><textarea value={qa.a} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, a: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm h-12 outline-none focus:border-emerald-500" placeholder="答案..." /></div>
+                          <div className="flex items-start"><span className="text-indigo-500 font-black mr-2 mt-2 text-xs">Q</span><input value={qa.q} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, q: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm font-bold outline-none" /></div>
+                          <div className="flex items-start"><span className="text-emerald-500 font-black mr-2 mt-2 text-xs">A</span><textarea value={qa.a} onChange={(e) => setQaList(qaList.map(i => i.id === qa.id ? { ...i, a: e.target.value } : i))} className="w-full bg-transparent border-b border-slate-200 p-2 text-sm h-12 outline-none" /></div>
                         </div>
                       </div>
                     ))}
@@ -380,8 +382,8 @@ export default function DashboardPage() {
                   <div className="flex items-center text-emerald-600 font-bold opacity-0 transition-opacity" style={{ opacity: saveMessage ? 1 : 0 }}>
                     <CheckCircle2 size={20} className="mr-2" /> {saveMessage}
                   </div>
-                  <button onClick={handleSave} disabled={isSaving} className={`bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-100 transition transform active:scale-95 ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'}`}>
-                    <Save size={20} className="inline mr-2" /> {isSaving ? '同步中...' : '儲存並更新 AI 知識庫'}
+                  <button onClick={handleSave} disabled={isSaving} className={`bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-100 transition transform active:scale-95 ${isSaving ? 'opacity-50' : 'hover:bg-indigo-700'}`}>
+                    <Save size={20} className="inline mr-2" /> {isSaving ? '訓練同步中...' : '儲存並更新 AI 知識庫'}
                   </button>
                 </div>
               </div>
@@ -399,19 +401,19 @@ export default function DashboardPage() {
                       <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white"><Bot size={20} /></div>
                       <div>
                         <div className="font-bold text-sm leading-none">{config.shopName || "AI 測試"}</div>
-                        <div className="text-[9px] text-green-400 mt-1 font-medium italic">● 智能回覆系統已就緒</div>
+                        <div className="text-[9px] text-green-400 mt-1">● 智能回覆系統已就緒</div>
                       </div>
                     </div>
                     <div className="flex-1 bg-slate-800 bg-opacity-30 overflow-y-auto p-4 space-y-4">
                       {chatHistory.map((m, i) => (
                         <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[85%] p-3.5 rounded-2xl text-[13px] leading-relaxed ${m.role === 'user' ? 'bg-emerald-400 text-black rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none'}`}>{m.content}</div>
+                          <div className={`max-w-[85%] p-3.5 rounded-2xl text-[13px] ${m.role === 'user' ? 'bg-emerald-400 text-black rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none'}`}>{m.content}</div>
                         </div>
                       ))}
                     </div>
                     <form onSubmit={handleSendMessage} className="bg-white p-3 flex items-center space-x-2 rounded-b-3xl pb-6">
-                      <input type="text" value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} placeholder="測試發問..." className="flex-1 px-4 py-2 bg-slate-50 rounded-full text-sm outline-none border border-slate-100 focus:ring-1 focus:ring-indigo-500 transition-all" />
-                      <button type="submit" className="bg-indigo-600 p-2.5 rounded-full text-white shadow hover:bg-indigo-500 active:scale-90 transition-all"><ArrowRight size={18} /></button>
+                      <input type="text" value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} placeholder="點擊此處測試發問..." className="flex-1 px-4 py-2 bg-slate-50 rounded-full text-sm outline-none border border-slate-100" />
+                      <button type="submit" className="bg-indigo-600 p-2.5 rounded-full text-white"><ArrowRight size={18} /></button>
                     </form>
                   </div>
                 </div>
@@ -427,21 +429,21 @@ export default function DashboardPage() {
                 <div className="p-4 bg-green-50 border border-green-100 rounded-2xl flex items-center space-x-4">
                    <CheckCircle2 className="text-green-600" />
                    <div className="flex-1">
-                      <p className="text-green-800 font-bold">通訊狀態：{userId ? '已驗證' : '模擬中'}</p>
+                      <p className="text-green-800 font-bold">通訊狀態：{userId ? '雲端驗證通過' : '模擬連線中'}</p>
                       <p className="text-green-600 text-xs">您的 Webhook 已準備好接收 LINE 訊息</p>
                    </div>
                 </div>
                 
                 <div className="space-y-4">
                   <label className="block text-sm font-bold text-slate-700">LINE Messaging API Token</label>
-                  <input type="password" name="lineToken" value={config.lineToken} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Channel Access Token (long-lived)" />
+                  <input type="password" name="lineToken" value={config.lineToken} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Channel Access Token (long-lived)" />
                 </div>
 
                 <div className="space-y-4">
                   <label className="block text-sm font-bold text-slate-700">Webhook URL</label>
                   <div className="flex space-x-2">
                     <input type="text" readOnly value={`https://${typeof window !== 'undefined' ? window.location.host : '...'}/api/webhook?userId=${userId || 'guest'}`} className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl text-indigo-600 font-mono text-xs" />
-                    <button onClick={handleCopyWebhook} className="bg-slate-800 text-white px-6 py-4 rounded-xl font-bold text-sm flex items-center hover:bg-slate-700 active:scale-95 transition-all"><Copy size={18} className="mr-2" /> 複製</button>
+                    <button onClick={handleCopyWebhook} className="bg-slate-800 text-white px-6 py-4 rounded-xl font-bold text-sm flex items-center"><Copy size={18} className="mr-2" /> 複製</button>
                   </div>
                 </div>
 
