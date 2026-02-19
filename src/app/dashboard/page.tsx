@@ -7,7 +7,7 @@ import {
   CheckCircle2, Bot, Database, LineChart, MessageSquare, 
   Plus, ArrowRight, LogOut, Trash2, Zap, LayoutDashboard,
   TrendingUp, Users, ShieldCheck, HelpCircle, Clock, Copy, AlertCircle,
-  CreditCard, Sparkles, Star, Mail, Lock, UserPlus, LogIn
+  CreditCard, Sparkles, Star, Mail, Lock, UserPlus, LogIn, Globe
 } from 'lucide-react';
 
 // Firebase 相關模組匯入
@@ -44,6 +44,7 @@ export default function DashboardPage() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   // --- UI 與 業務狀態 ---
   const [activeTab, setActiveTab] = useState('dashboard'); 
@@ -139,6 +140,7 @@ export default function DashboardPage() {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError("");
+    setIsAuthenticating(true);
     if (!auth) return;
 
     try {
@@ -149,6 +151,22 @@ export default function DashboardPage() {
       }
     } catch (err: any) {
       setAuthError(err.message.includes("auth/invalid-credential") ? "帳號或密碼錯誤" : "驗證失敗，請檢查格式");
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  // 🌟 新增：匿名體驗登入處理 🌟
+  const handleAnonymousLogin = async () => {
+    setAuthError("");
+    setIsAuthenticating(true);
+    if (!auth) return;
+    try {
+      await signInAnonymously(auth);
+    } catch (err: any) {
+      setAuthError("匿名登入失敗，請稍後再試。");
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
@@ -282,13 +300,27 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <button 
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center space-x-2"
-            >
-              {isLoginView ? <LogIn size={20} /> : <UserPlus size={20} />}
-              <span>{isLoginView ? '立即登入' : '註冊新帳號'}</span>
-            </button>
+            <div className="space-y-3 pt-2">
+              <button 
+                type="submit"
+                disabled={isAuthenticating}
+                className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+              >
+                {isLoginView ? <LogIn size={20} /> : <UserPlus size={20} />}
+                <span>{isLoginView ? '立即登入' : '註冊新帳號'}</span>
+              </button>
+
+              {/* 🌟 匿名體驗按鈕 🌟 */}
+              <button 
+                type="button"
+                onClick={handleAnonymousLogin}
+                disabled={isAuthenticating}
+                className="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold text-base hover:bg-slate-200 active:scale-95 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+              >
+                <Zap size={18} className="text-amber-500 fill-amber-500" />
+                <span>快速匿名體驗</span>
+              </button>
+            </div>
           </form>
 
           <div className="mt-8 text-center border-t border-slate-100 pt-6">
