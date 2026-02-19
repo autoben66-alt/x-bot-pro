@@ -415,12 +415,12 @@ export default function DashboardPage() {
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">LINE Channel Access Token</label>
-                      <input type="password" readonly value="****************************************" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-400" />
+                      <input type="password" readOnly value="****************************************" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-400" />
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Webhook URL (複製此網址貼回 LINE 後台)</label>
                       <div className="flex space-x-2">
-                        <input type="text" readonly value="https://x-bot-wine.vercel.app/api/webhook" className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl text-indigo-600 font-mono text-xs" />
+                        <input type="text" readOnly value="https://x-bot-wine.vercel.app/api/webhook" className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl text-indigo-600 font-mono text-xs" />
                         <button className="px-4 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm">複製</button>
                       </div>
                     </div>
