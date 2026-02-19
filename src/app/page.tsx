@@ -37,7 +37,9 @@ const LandingPage = ({ onNavigate }: any) => {
       <nav className="container mx-auto px-6 py-6 flex justify-between items-center relative z-20">
         <div className="flex items-center space-x-2">
           <Bot size={32} className="text-indigo-400" />
-          <span className="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">X-Bot</span>
+          <span className="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">
+            X-Bot
+          </span>
         </div>
         <div className="hidden md:flex space-x-8 font-medium text-slate-300">
           <a href="#features" className="hover:text-white transition">功能特色</a>
@@ -57,9 +59,58 @@ const LandingPage = ({ onNavigate }: any) => {
         <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-semibold backdrop-blur-sm">🚀 X-Islands 旗下最新力作</div>
         <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight">讓 AI 成為您的 <br className="hidden md:block" /><span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400">24H 金牌客服管家</span></h1>
         <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl leading-relaxed">專為民宿與地方業者打造的 LINE 智能回覆系統。<br />只需填寫資料，AI 就能代您回覆房客所有重複問題。</p>
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-20">
           <button onClick={() => onNavigate('dashboard')} className="bg-gradient-to-r from-indigo-500 to-cyan-500 text-white px-10 py-5 rounded-full font-bold text-lg hover:shadow-lg transition transform hover:-translate-y-1">免費啟動 AI 管家</button>
           <button className="px-10 py-5 rounded-full font-bold text-lg border border-slate-700 hover:bg-slate-800 transition text-slate-300">預約專人演示</button>
+        </div>
+
+        {/* 🌟 復原：模擬介面展示圖 (Showcase) 🌟 */}
+        <div className="relative w-full max-w-5xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+           <div 
+             className="w-full h-auto bg-slate-800 rounded-3xl border border-slate-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden flex shadow-indigo-500/10"
+             style={{ transform: 'perspective(1200px) rotateX(8deg)' }}
+           >
+              {/* 側邊導覽模擬 */}
+              <div className="w-1/4 border-r border-slate-700 p-6 hidden md:block bg-slate-900/80">
+                <div className="h-6 w-24 bg-indigo-500/20 rounded-lg mb-10 border border-indigo-500/10"></div>
+                <div className="space-y-5">
+                  <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
+                  <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
+                  <div className="h-10 w-full bg-indigo-600/30 border border-indigo-500/40 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.2)]"></div>
+                  <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
+                </div>
+              </div>
+              {/* 內容區域模擬 */}
+              <div className="flex-1 p-8 flex flex-col bg-gradient-to-br from-slate-900/50 to-slate-900/20 min-h-[400px]">
+                <div className="flex justify-between items-center mb-12">
+                   <div className="h-10 w-56 bg-slate-700/50 rounded-xl border border-slate-600/30"></div>
+                   <div className="h-10 w-10 bg-indigo-500/20 rounded-full border border-indigo-500/20"></div>
+                </div>
+                <div className="flex-1 space-y-8">
+                  {/* 右側訊息 (房客) */}
+                  <div className="flex justify-end animate-pulse">
+                    <div className="h-14 w-2/3 bg-indigo-500/40 rounded-3xl rounded-tr-none border border-indigo-500/30 shadow-xl shadow-indigo-500/5 flex items-center px-6">
+                      <div className="h-2 w-full bg-indigo-200/20 rounded"></div>
+                    </div>
+                  </div>
+                  {/* 左側訊息 (AI 回覆) */}
+                  <div className="flex justify-start">
+                    <div className="h-24 w-3/4 bg-slate-800 rounded-3xl rounded-tl-none border border-slate-700 p-6 space-y-3 shadow-2xl">
+                       <div className="h-2 w-full bg-slate-600 rounded"></div>
+                       <div className="h-2 w-full bg-slate-600 rounded"></div>
+                       <div className="h-2 w-2/3 bg-indigo-400/50 rounded"></div>
+                    </div>
+                  </div>
+                  {/* 右側訊息 (房客續問) */}
+                  <div className="flex justify-end opacity-60">
+                    <div className="h-14 w-1/2 bg-indigo-500/40 rounded-3xl rounded-tr-none border border-indigo-500/20"></div>
+                  </div>
+                </div>
+              </div>
+           </div>
+           {/* 裝飾發光球 */}
+           <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full blur-[80px] opacity-30"></div>
+           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-cyan-500 rounded-full blur-[90px] opacity-20"></div>
         </div>
       </div>
 
@@ -114,7 +165,6 @@ const LandingPage = ({ onNavigate }: any) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* 方案 1 */}
             <div className="bg-slate-800 p-10 rounded-[2.5rem] border border-slate-700 flex flex-col h-full">
               <h3 className="text-xl font-bold mb-2">X-Lite 基礎體驗</h3>
               <div className="mb-6"><span className="text-4xl font-black">$0</span><span className="text-slate-400 ml-2">/ 月</span></div>
@@ -126,7 +176,6 @@ const LandingPage = ({ onNavigate }: any) => {
               <button onClick={() => onNavigate('dashboard')} className="w-full py-4 rounded-2xl border border-slate-600 font-bold hover:bg-slate-700 transition">開始免費體驗</button>
             </div>
 
-            {/* 方案 2 (Pro) */}
             <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 flex flex-col h-full relative overflow-hidden transform scale-105 z-10 border-4 border-indigo-500">
               <div className="absolute top-0 right-0 bg-indigo-600 text-white px-6 py-2 rounded-bl-2xl font-black text-xs uppercase tracking-widest italic">最熱門</div>
               <h3 className="text-xl font-bold mb-2 text-slate-900">X-Pro 專業管家</h3>
@@ -140,7 +189,6 @@ const LandingPage = ({ onNavigate }: any) => {
               <button onClick={() => onNavigate('dashboard')} className="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition">立即升級 Pro</button>
             </div>
 
-            {/* 方案 3 */}
             <div className="bg-slate-800 p-10 rounded-[2.5rem] border border-slate-700 flex flex-col h-full">
               <h3 className="text-xl font-bold mb-2">X-Biz 企業旗艦</h3>
               <div className="mb-6"><span className="text-4xl font-black">客製化</span></div>
@@ -155,7 +203,6 @@ const LandingPage = ({ onNavigate }: any) => {
         </div>
       </div>
 
-      {/* 底部資訊 */}
       <footer className="bg-slate-950 py-12 px-6 border-t border-slate-900 text-center">
         <div className="flex items-center justify-center space-x-2 mb-4 opacity-50">
           <Bot size={24} />
@@ -202,17 +249,13 @@ const DashboardComponent = ({ onNavigate }: any) => {
   const [chatHistory, setChatHistory] = useState([{ role: 'assistant', content: '嗨！我是 AI 小管家，請問有什麼我可以幫您的嗎？😊' }]);
   const [inputMessage, setInputMessage] = useState("");
 
-  // Firebase 初始化邏輯
   useEffect(() => {
     const initFirebase = async () => {
       let firebaseConfig: any = null;
-      
-      // 1. 優先從環境變數讀取
       if (process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
         try { firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG); } catch (e) {}
       }
       
-      // 2. 如果環境變數不存在，使用您提供的真實設定作為預設值
       if (!firebaseConfig || !firebaseConfig.projectId) {
         firebaseConfig = {
           apiKey: "AIzaSyDoMtzJ3UD8x1XQZIwgBh9H6xi9OfOa8rg",
@@ -232,7 +275,6 @@ const DashboardComponent = ({ onNavigate }: any) => {
         setDb(firestore);
         setAuthInstance(authObj);
 
-        // 初始化 Analytics (僅在瀏覽器環境且支援時)
         if (typeof window !== "undefined") {
           isSupported().then((supported) => {
             if (supported) getAnalytics(app);
@@ -251,7 +293,6 @@ const DashboardComponent = ({ onNavigate }: any) => {
     initFirebase();
   }, []);
 
-  // 資料監聽
   useEffect(() => {
     if (!isAuthReady || !userId || !db) return;
     const appId = process.env.NEXT_PUBLIC_APP_ID || 'x-bot-pro-app';
@@ -330,7 +371,6 @@ const DashboardComponent = ({ onNavigate }: any) => {
 
   if (!isAuthReady) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white font-bold animate-pulse">正在連線至雲端資料庫...</div>;
 
-  // 登入註冊頁面
   if (!userId) {
     return (
       <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 relative overflow-hidden">
@@ -356,7 +396,6 @@ const DashboardComponent = ({ onNavigate }: any) => {
     );
   }
 
-  // 後台主介面
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
       <aside className="w-full md:w-64 bg-[#0f172a] text-white flex-shrink-0 flex flex-col z-20 shadow-2xl">
