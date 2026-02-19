@@ -6,7 +6,7 @@ import {
   Save, MessageCircle, Settings, Power, Smartphone,
   CheckCircle2, Bot, Database, LineChart, MessageSquare, 
   Plus, ArrowRight, LogOut, Trash2, Zap, LayoutDashboard,
-  TrendingUp, Users, ShieldCheck, HelpCircle
+  TrendingUp, Users, ShieldCheck, HelpCircle, Clock
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -381,7 +381,7 @@ export default function DashboardPage() {
 
                     <form onSubmit={handleSendMessage} className="bg-white p-3 flex items-center space-x-2 rounded-b-3xl border-t border-slate-100 pb-6">
                       <input 
-                        type="text" value={inputMessage} onChange={(e) => setInputMessage(e.target.value)}
+                        type="text" value={inputMessage} onChange={(e: any) => setInputMessage(e.target.value)}
                         placeholder="點擊此處開始發問測試..."
                         className="flex-1 bg-slate-50 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                       />
