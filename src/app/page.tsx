@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { 
   Save, MessageCircle, Wifi, Clock, Settings, Power, Smartphone,
   CheckCircle2, Bot, Database, LineChart, CreditCard, MessageSquare,
-  Plus, ArrowRight, Zap, Shield, Globe, LogOut, Mail, Lock, LogIn, UserPlus, Copy, AlertCircle, Star, Activity, Cpu, HardDrive
+  Plus, ArrowRight, Zap, Shield, Globe, LogOut, Mail, Lock, LogIn, UserPlus, 
+  Copy, AlertCircle, Star, Activity, Cpu, HardDrive, LayoutDashboard, 
+  ShieldCheck, Users, TrendingUp, HelpCircle, Trash2
 } from 'lucide-react';
 
-// Firebase 模組匯入
+// Firebase 相關模組匯入
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
   getAuth, 
