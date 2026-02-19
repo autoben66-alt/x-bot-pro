@@ -6,7 +6,7 @@ import {
   CheckCircle2, Bot, Database, LineChart, CreditCard, MessageSquare,
   Plus, ArrowRight, Zap, Shield, Globe, LogOut, Mail, Lock, LogIn, UserPlus, 
   Copy, AlertCircle, Star, Activity, Cpu, HardDrive, LayoutDashboard, 
-  ShieldCheck, Users, TrendingUp, HelpCircle, Trash2, ChevronRight
+  ShieldCheck, Users, TrendingUp, HelpCircle, Trash2, ChevronRight, X
 } from 'lucide-react';
 
 // Firebase 相關模組匯入
@@ -59,124 +59,84 @@ const LandingPage = ({ onNavigate }: any) => {
         <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-semibold backdrop-blur-sm">🚀 X-Islands 旗下最新力作</div>
         <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight">讓 AI 成為您的 <br className="hidden md:block" /><span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400">24H 金牌客服管家</span></h1>
         <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl leading-relaxed">專為民宿與地方業者打造的 LINE 智能回覆系統。<br />只需填寫資料，AI 就能代您回覆房客所有重複問題。</p>
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-20">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-20 relative z-10">
           <button onClick={() => onNavigate('dashboard')} className="bg-gradient-to-r from-indigo-500 to-cyan-500 text-white px-10 py-5 rounded-full font-bold text-lg hover:shadow-lg transition transform hover:-translate-y-1">免費啟動 AI 管家</button>
           <button className="px-10 py-5 rounded-full font-bold text-lg border border-slate-700 hover:bg-slate-800 transition text-slate-300">預約專人演示</button>
         </div>
 
-        {/* 🌟 復原：模擬介面展示圖 (Showcase) 🌟 */}
-        <div className="relative w-full max-w-5xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+        {/* 🌟 展示 Mockup 🌟 */}
+        <div className="relative w-full max-w-5xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 z-0">
            <div 
              className="w-full h-auto bg-slate-800 rounded-3xl border border-slate-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden flex shadow-indigo-500/10"
-             style={{ transform: 'perspective(1200px) rotateX(8deg)' }}
+             style={{ transform: 'perspective(1200px) rotateX(5deg)' }}
            >
-              {/* 側邊導覽模擬 */}
               <div className="w-1/4 border-r border-slate-700 p-6 hidden md:block bg-slate-900/80">
                 <div className="h-6 w-24 bg-indigo-500/20 rounded-lg mb-10 border border-indigo-500/10"></div>
                 <div className="space-y-5">
                   <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
-                  <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
                   <div className="h-10 w-full bg-indigo-600/30 border border-indigo-500/40 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.2)]"></div>
+                  <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
                   <div className="h-10 w-full bg-slate-800 rounded-xl border border-slate-700/50"></div>
                 </div>
               </div>
-              {/* 內容區域模擬 */}
-              <div className="flex-1 p-8 flex flex-col bg-gradient-to-br from-slate-900/50 to-slate-900/20 min-h-[400px]">
-                <div className="flex justify-between items-center mb-12">
-                   <div className="h-10 w-56 bg-slate-700/50 rounded-xl border border-slate-600/30"></div>
+              <div className="flex-1 p-8 flex flex-col bg-gradient-to-br from-slate-900/50 to-slate-900/20 min-h-[350px]">
+                <div className="flex justify-between items-center mb-10">
+                   <div className="h-8 w-48 bg-slate-700/50 rounded-xl border border-slate-600/30"></div>
                    <div className="h-10 w-10 bg-indigo-500/20 rounded-full border border-indigo-500/20"></div>
                 </div>
-                <div className="flex-1 space-y-8">
-                  {/* 右側訊息 (房客) */}
-                  <div className="flex justify-end animate-pulse">
-                    <div className="h-14 w-2/3 bg-indigo-500/40 rounded-3xl rounded-tr-none border border-indigo-500/30 shadow-xl shadow-indigo-500/5 flex items-center px-6">
-                      <div className="h-2 w-full bg-indigo-200/20 rounded"></div>
-                    </div>
-                  </div>
-                  {/* 左側訊息 (AI 回覆) */}
-                  <div className="flex justify-start">
-                    <div className="h-24 w-3/4 bg-slate-800 rounded-3xl rounded-tl-none border border-slate-700 p-6 space-y-3 shadow-2xl">
-                       <div className="h-2 w-full bg-slate-600 rounded"></div>
-                       <div className="h-2 w-full bg-slate-600 rounded"></div>
-                       <div className="h-2 w-2/3 bg-indigo-400/50 rounded"></div>
-                    </div>
-                  </div>
-                  {/* 右側訊息 (房客續問) */}
-                  <div className="flex justify-end opacity-60">
-                    <div className="h-14 w-1/2 bg-indigo-500/40 rounded-3xl rounded-tr-none border border-indigo-500/20"></div>
-                  </div>
+                <div className="flex-1 space-y-6">
+                  <div className="flex justify-end"><div className="h-12 w-2/3 bg-indigo-500/40 rounded-2xl rounded-tr-none border border-indigo-500/30 flex items-center px-6"><div className="h-1.5 w-full bg-indigo-200/20 rounded"></div></div></div>
+                  <div className="flex justify-start"><div className="h-20 w-3/4 bg-slate-800 rounded-2xl rounded-tl-none border border-slate-700 p-5 space-y-2 shadow-2xl"><div className="h-1.5 w-full bg-slate-600 rounded"></div><div className="h-1.5 w-2/3 bg-indigo-400/50 rounded"></div></div></div>
+                  <div className="flex justify-end opacity-60"><div className="h-12 w-1/2 bg-indigo-500/40 rounded-2xl rounded-tr-none"></div></div>
                 </div>
               </div>
            </div>
-           {/* 裝飾發光球 */}
-           <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full blur-[80px] opacity-30"></div>
-           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-cyan-500 rounded-full blur-[90px] opacity-20"></div>
         </div>
       </div>
 
-      {/* 功能特色區塊 (Features) */}
+      {/* 功能特色區塊 */}
       <div id="features" className="bg-slate-950 py-24 px-6 border-t border-slate-800 relative">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl font-black mb-4">為什麼選擇 X-Bot？</h2>
-            <p className="text-slate-400 max-w-xl mx-auto font-medium">我們不只是 AI，更是懂旅遊業的數位管家。解決半夜回訊息的痛苦，提升房客滿意度。</p>
+            <p className="text-slate-400 max-w-xl mx-auto font-medium">解決旅遊業最痛的客服人力問題，將時間還給現場服務。</p>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="bg-slate-900 p-10 rounded-3xl border border-slate-800 hover:border-indigo-500/50 transition group">
-              <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition duration-300">
-                <Zap size={32} className="text-indigo-400" />
-              </div>
+              <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition duration-300"><Zap size={32} className="text-indigo-400" /></div>
               <h3 className="text-2xl font-bold mb-4">三分鐘建置大腦</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">
-                不需要寫任何程式碼。只需填寫入住時間、WiFi 密碼或上傳民宿手冊，AI 會在幾秒鐘內學會所有細節。
-              </p>
+              <p className="text-slate-400 leading-relaxed font-medium">只需填寫入住時間、WiFi 密碼或上傳民宿手冊，AI 會在幾秒鐘內學會所有細節。</p>
             </div>
-            
             <div className="bg-slate-900 p-10 rounded-3xl border border-slate-800 hover:border-cyan-500/50 transition group">
-              <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition duration-300">
-                <MessageCircle size={32} className="text-cyan-400" />
-              </div>
+              <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition duration-300"><MessageCircle size={32} className="text-cyan-400" /></div>
               <h3 className="text-2xl font-bold mb-4">無縫接軌 LINE OA</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">
-                直接串接您的 LINE 官方帳號。客人發問，AI 即時在 LINE 上回覆，讓溝通零時差、服務不中斷。
-              </p>
+              <p className="text-slate-400 leading-relaxed font-medium">台灣客人最愛用 LINE。只要一鍵授權，AI 即刻入駐官方帳號，全天候親切待命。</p>
             </div>
-
             <div className="bg-slate-900 p-10 rounded-3xl border border-slate-800 hover:border-emerald-500/50 transition group">
-              <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition duration-300">
-                <Shield size={32} className="text-emerald-400" />
-              </div>
+              <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition duration-300"><Shield size={32} className="text-emerald-400" /></div>
               <h3 className="text-2xl font-bold mb-4">精準判斷不瞎掰</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">
-                採用最新 RAG 檢索技術。遇到不懂的問題（如：特殊議價），AI 會聰明地標記給真人管家處理。
-              </p>
+              <p className="text-slate-400 leading-relaxed font-medium">採用最新 RAG 技術，遇到不懂的問題會聰明地通知真人接手，絕不亂報價。</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 方案計價區塊 (Pricing) */}
+      {/* 方案計價 */}
       <div id="pricing" className="py-24 px-6 bg-slate-900">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4">適合不同規模的方案</h2>
-            <p className="text-slate-400 font-medium">從個人民宿到連鎖飯店，都有專屬的智能方案。</p>
-          </div>
-
+          <div className="text-center mb-16"><h2 className="text-4xl font-black mb-4">適合不同規模的方案</h2><p className="text-slate-400 font-medium">從個人民宿到連鎖飯店，都有專屬的智能方案。</p></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-slate-800 p-10 rounded-[2.5rem] border border-slate-700 flex flex-col h-full">
               <h3 className="text-xl font-bold mb-2">X-Lite 基礎體驗</h3>
               <div className="mb-6"><span className="text-4xl font-black">$0</span><span className="text-slate-400 ml-2">/ 月</span></div>
               <ul className="space-y-4 mb-10 flex-1">
-                <li className="flex items-center space-x-3 text-slate-300"><CheckCircle2 size={18} className="text-indigo-400" /> <span>24H 基礎自動回覆</span></li>
+                <li className="flex items-center space-x-3 text-slate-300"><CheckCircle2 size={18} className="text-indigo-400" /> <span>24H 沙盒自動回覆</span></li>
                 <li className="flex items-center space-x-3 text-slate-300"><CheckCircle2 size={18} className="text-indigo-400" /> <span>10 組自訂 Q&A</span></li>
                 <li className="flex items-center space-x-3 text-slate-500 line-through"><span>LINE 官方帳號串接</span></li>
               </ul>
               <button onClick={() => onNavigate('dashboard')} className="w-full py-4 rounded-2xl border border-slate-600 font-bold hover:bg-slate-700 transition">開始免費體驗</button>
             </div>
-
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 flex flex-col h-full relative overflow-hidden transform scale-105 z-10 border-4 border-indigo-500">
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl flex flex-col h-full relative overflow-hidden transform scale-105 z-10 border-4 border-indigo-500">
               <div className="absolute top-0 right-0 bg-indigo-600 text-white px-6 py-2 rounded-bl-2xl font-black text-xs uppercase tracking-widest italic">最熱門</div>
               <h3 className="text-xl font-bold mb-2 text-slate-900">X-Pro 專業管家</h3>
               <div className="mb-6 text-slate-900"><span className="text-4xl font-black">NT$ 880</span><span className="text-slate-500 ml-2">/ 月</span></div>
@@ -184,17 +144,14 @@ const LandingPage = ({ onNavigate }: any) => {
                 <li className="flex items-center space-x-3 text-slate-700 font-bold"><CheckCircle2 size={18} className="text-indigo-600" /> <span>LINE OA 無縫串接</span></li>
                 <li className="flex items-center space-x-3 text-slate-700 font-bold"><CheckCircle2 size={18} className="text-indigo-600" /> <span>無限 Q&A 知識庫</span></li>
                 <li className="flex items-center space-x-3 text-slate-700 font-bold"><CheckCircle2 size={18} className="text-indigo-600" /> <span>語氣個性化設定</span></li>
-                <li className="flex items-center space-x-3 text-slate-700 font-bold"><CheckCircle2 size={18} className="text-indigo-600" /> <span>多媒體檔案識別</span></li>
               </ul>
-              <button onClick={() => onNavigate('dashboard')} className="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition">立即升級 Pro</button>
+              <button onClick={() => onNavigate('dashboard')} className="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-lg shadow-xl hover:bg-indigo-700 transition">立即升級 Pro</button>
             </div>
-
             <div className="bg-slate-800 p-10 rounded-[2.5rem] border border-slate-700 flex flex-col h-full">
               <h3 className="text-xl font-bold mb-2">X-Biz 企業旗艦</h3>
               <div className="mb-6"><span className="text-4xl font-black">客製化</span></div>
               <ul className="space-y-4 mb-10 flex-1">
                 <li className="flex items-center space-x-3 text-slate-300"><CheckCircle2 size={18} className="text-cyan-400" /> <span>多點聯動管家系統</span></li>
-                <li className="flex items-center space-x-3 text-slate-300"><CheckCircle2 size={18} className="text-cyan-400" /> <span>CRM 會員系統整合</span></li>
                 <li className="flex items-center space-x-3 text-slate-300"><CheckCircle2 size={18} className="text-cyan-400" /> <span>專人建置與維護</span></li>
               </ul>
               <button className="w-full py-4 rounded-2xl border border-slate-600 font-bold hover:bg-slate-700 transition">聯繫業務洽談</button>
@@ -204,10 +161,7 @@ const LandingPage = ({ onNavigate }: any) => {
       </div>
 
       <footer className="bg-slate-950 py-12 px-6 border-t border-slate-900 text-center">
-        <div className="flex items-center justify-center space-x-2 mb-4 opacity-50">
-          <Bot size={24} />
-          <span className="font-black tracking-widest uppercase text-sm">X-Bot AI Assistant</span>
-        </div>
+        <div className="flex items-center justify-center space-x-2 mb-4 opacity-50"><Bot size={24} /><span className="font-black tracking-widest uppercase text-sm">X-Bot AI Assistant</span></div>
         <p className="text-slate-600 text-xs font-medium">© 2026 X-Islands Tech. All rights reserved.</p>
       </footer>
     </div>
@@ -240,7 +194,7 @@ const DashboardComponent = ({ onNavigate }: any) => {
     tone: "enthusiastic",
     customRules: "",
     lineToken: "",
-    currentPlan: "X-Pro"
+    currentPlan: "X-Lite" // 🌟 預設改為免費版 🌟
   });
 
   const [qaList, setQaList] = useState<any[]>([]);
@@ -255,7 +209,6 @@ const DashboardComponent = ({ onNavigate }: any) => {
       if (process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
         try { firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG); } catch (e) {}
       }
-      
       if (!firebaseConfig || !firebaseConfig.projectId) {
         firebaseConfig = {
           apiKey: "AIzaSyDoMtzJ3UD8x1XQZIwgBh9H6xi9OfOa8rg",
@@ -267,28 +220,20 @@ const DashboardComponent = ({ onNavigate }: any) => {
           measurementId: "G-XFWM3H5SV6"
         };
       }
-
       try {
         const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
         const firestore = getFirestore(app);
         const authObj = getAuth(app);
         setDb(firestore);
         setAuthInstance(authObj);
-
         if (typeof window !== "undefined") {
-          isSupported().then((supported) => {
-            if (supported) getAnalytics(app);
-          });
+          isSupported().then((supported) => { if (supported) getAnalytics(app); });
         }
-
         onAuthStateChanged(authObj, (user) => {
           setUserId(user ? user.uid : null);
           setIsAuthReady(true);
         });
-      } catch (err) {
-        console.error("Firebase 連線失敗:", err);
-        setIsAuthReady(true);
-      }
+      } catch (err) { setIsAuthReady(true); }
     };
     initFirebase();
   }, []);
@@ -348,12 +293,7 @@ const DashboardComponent = ({ onNavigate }: any) => {
     textArea.value = url;
     document.body.appendChild(textArea);
     textArea.select();
-    try {
-      document.execCommand('copy');
-      setSaveMessage("網址已複製到剪貼簿！");
-    } catch (err) {
-      console.error('無法複製', err);
-    }
+    try { document.execCommand('copy'); setSaveMessage("網址已複製！"); } catch (err) {}
     document.body.removeChild(textArea);
     setTimeout(() => setSaveMessage(""), 2000);
   };
@@ -371,15 +311,29 @@ const DashboardComponent = ({ onNavigate }: any) => {
 
   if (!isAuthReady) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white font-bold animate-pulse">正在連線至雲端資料庫...</div>;
 
+  // 登入註冊介面
   if (!userId) {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px]"></div>
-        <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-10 relative z-10">
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-600 rounded-full blur-[120px]"></div>
+        </div>
+
+        {/* 🌟 返回首頁按鈕 🌟 */}
+        <button 
+          onClick={() => onNavigate('landing')}
+          className="absolute top-8 left-8 text-slate-400 hover:text-white flex items-center space-x-2 transition z-20 group"
+        >
+          <ArrowRight size={20} className="rotate-180 group-hover:-translate-x-1 transition" />
+          <span className="font-bold text-sm tracking-widest">返回首頁</span>
+        </button>
+
+        <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-10 relative z-10 animate-in fade-in zoom-in duration-500">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"><Bot size={32} className="text-white" /></div>
+            <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-100"><Bot size={32} className="text-white" /></div>
             <h1 className="text-3xl font-black text-slate-900">X-Bot 控制台</h1>
-            <p className="text-slate-500 mt-2">請登入您的業者帳號</p>
+            <p className="text-slate-500 mt-2 font-medium">請登入您的業者帳號</p>
           </div>
           <form onSubmit={handleAuth} className="space-y-4">
             <input type="email" required placeholder="Email 地址" value={authEmail} onChange={e => setAuthEmail(e.target.value)} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-indigo-500 transition-all font-medium" />
@@ -428,9 +382,28 @@ const DashboardComponent = ({ onNavigate }: any) => {
                   <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200"><div className={`w-12 h-12 ${s.bg} ${s.color} rounded-xl flex items-center justify-center mb-4`}>{s.icon}</div><p className="text-sm font-bold text-slate-400">{s.label}</p><p className={`text-3xl font-black mt-1 ${s.color}`}>{s.val}</p></div>
                 ))}
               </div>
-              <div className="bg-white rounded-3xl border border-slate-200 p-8 flex items-center justify-between">
-                <div className="flex items-center space-x-4"><CreditCard className="text-indigo-600" size={32} /><div><h3 className="font-bold text-xl">方案：{config.currentPlan} 專業管家</h3><p className="text-sm text-slate-500">無限 Q&A 與語氣自訂權限已解鎖</p></div></div>
-                <div className="text-right"><span className="text-3xl font-black text-indigo-600">NT$ 880</span><span className="text-slate-400 text-sm font-bold ml-1">/ 月</span></div>
+              
+              <div className="bg-white rounded-3xl border border-slate-200 p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center space-x-4">
+                  <div className={`p-4 rounded-2xl ${config.currentPlan === 'X-Lite' ? 'bg-slate-100 text-slate-500' : 'bg-indigo-100 text-indigo-600'}`}>
+                    <CreditCard size={32} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xl">目前方案：{config.currentPlan === 'X-Lite' ? 'X-Lite 免費版' : 'X-Pro 專業版'}</h3>
+                    <p className="text-sm text-slate-500">{config.currentPlan === 'X-Lite' ? '體驗 AI 客服魅力，隨時升級解鎖 LINE 串接。' : '無限 Q&A 與語氣自訂權限已解鎖'}</p>
+                  </div>
+                </div>
+                <div className="text-right flex flex-col items-center md:items-end">
+                  <div className="mb-2">
+                    <span className="text-3xl font-black text-indigo-600">{config.currentPlan === 'X-Lite' ? '$ 0' : 'NT$ 880'}</span>
+                    <span className="text-slate-400 text-sm font-bold ml-1">/ 月</span>
+                  </div>
+                  {config.currentPlan === 'X-Lite' && (
+                    <button className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold text-sm shadow-lg hover:bg-indigo-700 transition active:scale-95">
+                      立即升級 X-Pro
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -449,19 +422,28 @@ const DashboardComponent = ({ onNavigate }: any) => {
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                {/* 🌟 修正：核心營運參數排版優化防止跑版 🌟 */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6 overflow-hidden">
                   <h3 className="font-bold flex items-center text-lg"><Settings size={20} className="mr-2 text-indigo-500" /> 核心營運參數</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-4"><label className="text-xs font-black text-slate-400 uppercase tracking-widest font-mono">Operations Time</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="bg-slate-50 p-2 rounded-xl border border-slate-100"><span className="text-[9px] text-slate-500 block">入住</span><input type="time" value={config.checkIn} onChange={e => setConfig({...config, checkIn: e.target.value})} className="w-full bg-transparent font-bold outline-none text-sm" /></div>
-                        <div className="bg-slate-50 p-2 rounded-xl border border-slate-100"><span className="text-[9px] text-slate-500 block">退房</span><input type="time" value={config.checkOut} onChange={e => setConfig({...config, checkOut: e.target.value})} className="w-full bg-transparent font-bold outline-none text-sm" /></div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest font-mono">Operations Time</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 min-w-0">
+                          <span className="text-[9px] text-slate-500 block">入住</span>
+                          <input type="time" value={config.checkIn} onChange={e => setConfig({...config, checkIn: e.target.value})} className="w-full bg-transparent font-bold outline-none text-sm" />
+                        </div>
+                        <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 min-w-0">
+                          <span className="text-[9px] text-slate-500 block">退房</span>
+                          <input type="time" value={config.checkOut} onChange={e => setConfig({...config, checkOut: e.target.value})} className="w-full bg-transparent font-bold outline-none text-sm" />
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-4"><label className="text-xs font-black text-slate-400 uppercase tracking-widest font-mono">Network Access</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <input type="text" value={config.wifiSsid} onChange={e => setConfig({...config, wifiSsid: e.target.value})} className="w-full p-3 border rounded-xl bg-slate-50 text-sm font-medium outline-none" placeholder="名稱" />
-                        <input type="text" value={config.wifiPass} onChange={e => setConfig({...config, wifiPass: e.target.value})} className="w-full p-3 border rounded-xl bg-slate-50 text-sm font-medium outline-none" placeholder="密碼" />
+                    <div className="space-y-4">
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest font-mono">Network Access</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" value={config.wifiSsid} onChange={e => setConfig({...config, wifiSsid: e.target.value})} className="w-full p-3 border-2 border-slate-50 bg-slate-50 rounded-xl text-sm font-bold outline-none focus:border-indigo-400 focus:bg-white transition-all min-w-0" placeholder="名稱" />
+                        <input type="text" value={config.wifiPass} onChange={e => setConfig({...config, wifiPass: e.target.value})} className="w-full p-3 border-2 border-slate-50 bg-slate-50 rounded-xl text-sm font-bold outline-none focus:border-indigo-400 focus:bg-white transition-all min-w-0" placeholder="密碼" />
                       </div>
                     </div>
                   </div>
@@ -489,7 +471,7 @@ const DashboardComponent = ({ onNavigate }: any) => {
                         <div className={`max-w-[85%] p-4 rounded-2xl text-[13px] leading-relaxed shadow-sm ${m.role === 'user' ? 'bg-indigo-500 text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none font-medium'}`}>{m.content}</div>
                       </div>
                     ))}</div>
-                    <form onSubmit={e => { e.preventDefault(); if(!inputMessage.trim()) return; setChatHistory([...chatHistory, {role:'user', content:inputMessage}]); const msg = inputMessage; setInputMessage(""); setTimeout(() => setChatHistory(prev => [...prev, {role:'assistant', content:simulateAIResponse(msg)}]), 800); }} className="bg-white p-3 flex items-center space-x-2 rounded-b-3xl pb-8 border-t border-slate-700/20"><input type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} placeholder="測試輸入..." className="flex-1 px-4 py-2 bg-slate-100 rounded-full text-sm outline-none" /><button type="submit" className="bg-indigo-600 p-2.5 rounded-full text-white shadow-md active:scale-90 transition-all"><ArrowRight size={18} /></button></form>
+                    <form onSubmit={e => { e.preventDefault(); if(!inputMessage.trim()) return; setChatHistory([...chatHistory, {role:'user', content:inputMessage}]); const msg = inputMessage; setInputMessage(""); setTimeout(() => setChatHistory(prev => [...prev, {role:'assistant', content:simulateAIResponse(msg)}]), 800); }} className="bg-white p-3 flex items-center space-x-2 rounded-b-3xl pb-8 border-t border-slate-700/20"><input type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} placeholder="測試輸入..." className="flex-1 px-4 py-2 bg-slate-100 rounded-full text-sm outline-none text-slate-800 focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium" /><button type="submit" className="bg-indigo-600 p-2.5 rounded-full text-white shadow-md active:scale-90 transition-all"><ArrowRight size={18} /></button></form>
                   </div>
                 </div>
               </div>
