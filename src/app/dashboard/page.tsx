@@ -19,7 +19,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signOut
+  signOut 
 } from 'firebase/auth';
 import { 
   getFirestore, 
@@ -83,9 +83,13 @@ export default function DashboardPage() {
   useEffect(() => {
     const startFirebase = async () => {
       let firebaseConfig: any = null;
+      
+      // 優先從環境變數讀取
       if (process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
         try { firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG); } catch (e) {}
       } 
+      
+      // 若無，則讀取 Canvas 模擬變數
       if (!firebaseConfig || !firebaseConfig.projectId) {
         // @ts-ignore
         const mockConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
@@ -93,6 +97,7 @@ export default function DashboardPage() {
       }
       
       if (!firebaseConfig || !firebaseConfig.projectId) {
+        console.warn("Firebase 設定缺失，目前處於離線展示模式。");
         setIsAuthReady(true);
         return;
       }
@@ -107,13 +112,13 @@ export default function DashboardPage() {
         onAuthStateChanged(firebaseAuth, async (user) => {
           if (user) {
             setUserId(user.uid);
-            setIsAuthReady(true);
           } else {
             setUserId(null);
-            setIsAuthReady(true);
           }
+          setIsAuthReady(true);
         });
       } catch (err) {
+        console.error("Firebase Init Error:", err);
         setIsAuthReady(true);
       }
     };
@@ -139,9 +144,12 @@ export default function DashboardPage() {
   // --- 3. 功能處理 ---
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) {
+      setAuthError("系統正在連接資料庫，請稍後再試。");
+      return;
+    }
     setAuthError("");
     setIsAuthenticating(true);
-    if (!auth) return;
 
     try {
       if (isLoginView) {
@@ -150,21 +158,35 @@ export default function DashboardPage() {
         await createUserWithEmailAndPassword(auth, authEmail, authPassword);
       }
     } catch (err: any) {
-      setAuthError(err.message.includes("auth/invalid-credential") ? "帳號或密碼錯誤" : "驗證失敗，請檢查格式");
+      console.error(err);
+      setAuthError(err.message.includes("auth/invalid-credential") ? "帳號或密碼錯誤" : "驗證失敗，請檢查格式或網路連線");
     } finally {
       setIsAuthenticating(false);
     }
   };
 
-  // 🌟 新增：匿名體驗登入處理 🌟
+  // 🌟 修正：匿名體驗登入處理 🌟
   const handleAnonymousLogin = async () => {
     setAuthError("");
+    
+    if (!auth) {
+      setAuthError("正在初始化連線，請稍後再點擊一次。");
+      return;
+    }
+
     setIsAuthenticating(true);
-    if (!auth) return;
     try {
-      await signInAnonymously(auth);
+      // 在 Canvas 環境中嘗試使用 Token，若無則匿名登入
+      // @ts-ignore
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        // @ts-ignore
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
     } catch (err: any) {
-      setAuthError("匿名登入失敗，請稍後再試。");
+      console.error(err);
+      setAuthError("快速進入失敗，請嘗試手動註冊或檢查連線。");
     } finally {
       setIsAuthenticating(false);
     }
@@ -246,7 +268,12 @@ export default function DashboardPage() {
   };
 
   if (!isAuthReady) {
-    return <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white"><Bot size={48} className="animate-bounce text-indigo-400 mb-4" /><p className="text-lg font-bold">正在準備加密環境...</p></div>;
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
+        <Bot size={48} className="animate-bounce text-indigo-400 mb-4" />
+        <p className="text-lg font-bold">正在準備加密環境...</p>
+      </div>
+    );
   }
 
   // --- 登入/註冊 介面渲染 ---
@@ -294,7 +321,7 @@ export default function DashboardPage() {
             </div>
 
             {authError && (
-              <div className="flex items-center space-x-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100">
+              <div className="flex items-center space-x-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100 animate-pulse">
                 <AlertCircle size={14} />
                 <span>{authError}</span>
               </div>
@@ -307,10 +334,9 @@ export default function DashboardPage() {
                 className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 {isLoginView ? <LogIn size={20} /> : <UserPlus size={20} />}
-                <span>{isLoginView ? '立即登入' : '註冊新帳號'}</span>
+                <span>{isAuthenticating ? '處理中...' : (isLoginView ? '立即登入' : '註冊新帳號')}</span>
               </button>
 
-              {/* 🌟 匿名體驗按鈕 🌟 */}
               <button 
                 type="button"
                 onClick={handleAnonymousLogin}
@@ -318,7 +344,7 @@ export default function DashboardPage() {
                 className="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold text-base hover:bg-slate-200 active:scale-95 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <Zap size={18} className="text-amber-500 fill-amber-500" />
-                <span>快速匿名體驗</span>
+                <span>{isAuthenticating ? '正在進入...' : '快速匿名體驗'}</span>
               </button>
             </div>
           </form>
